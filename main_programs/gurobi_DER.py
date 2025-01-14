@@ -5,7 +5,7 @@ from gurobipy import GRB
 model = gp.Model("DER_Optimization")
 
 # Parameters
-load_demand = 700  # Total load demand in MWh/day
+load_demand = 7000  # Total load demand in MWh/day
 solar_cost = 50    # Cost of solar PV energy ($/MWh)
 wind_cost = 30     # Cost of wind energy ($/MWh)
 grid_cost = 70     # Cost of grid energy ($/MWh)
