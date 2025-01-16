@@ -80,7 +80,7 @@ longitude = -86.8753
 api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"  # Replace with your actual API key
 panel_capacity_kW = 5.0  # Example panel capacity in kW
 panel_area_m2 = 20.0  # Example panel area in m²
-panel_efficiency = 0.15  # Example panel efficiency (15%)
+panel_efficiency = 0.8  # Example panel efficiency (15%)
 
 calculate_solar_panel_production(latitude, longitude, api_key, panel_capacity_kW, panel_area_m2, panel_efficiency)
 
