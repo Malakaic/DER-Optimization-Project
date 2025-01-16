@@ -54,7 +54,7 @@ def get_pvwatts_data(api_key, address, system_capacity, azimuth, tilt, losses, a
 # Example usage
 api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"  # Replace with your actual API key
 address = "west lafayette, in"
-system_capacity = 5  # System capacity in kW
+system_capacity = 10  # System capacity in kW
 azimuth = 180  # Azimuth angle in degrees
 tilt = 10  # Tilt angle in degrees
 losses = 14  # System losses as a percentage
