@@ -1,6 +1,7 @@
 import requests
 import json
 
+#OLD CODE
 def get_solar_data(latitude, longitude, api_key):
     """Fetch solar resource data from the NREL Solar Resource API."""
     url = f"https://developer.nrel.gov/api/solar/solar_resource/v1.json?api_key={api_key}&lat={latitude}&lon={longitude}"
