@@ -4,7 +4,10 @@ Current Topics to Research:
 
 Battery implementation and APIs
 Converter implementation and APIs
+    -No converter main function in PySAM
+    -There are converter fucntions within each main function Batteries, PV, etc.
 REopt Documentation and funtionality
+    -Nothing on REopt only PySAM
 GUI revisions and additions
 
 Ferd
