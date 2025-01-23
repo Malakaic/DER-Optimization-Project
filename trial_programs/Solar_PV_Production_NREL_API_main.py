@@ -1,6 +1,7 @@
 import requests
 import json
 
+#OLD CODE
 def get_pvwatts_data(api_key, address, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality):
     """
     Fetch solar production data from the NREL PVWatts API.
