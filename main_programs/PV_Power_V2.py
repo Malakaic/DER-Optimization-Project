@@ -41,7 +41,7 @@ def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, lo
         # Extract hourly AC output
         if "outputs" in data:
             hourly_ac_output = data["outputs"]["ac"]
-            
+
             # Check if hourly data is present
             if hourly_ac_output:
                 # Create the folder if it doesn't exist
