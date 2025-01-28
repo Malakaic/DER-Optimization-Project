@@ -49,7 +49,7 @@ def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, lo
                 os.makedirs(folder_name, exist_ok=True)
 
                 # File path for the CSV
-                file_path = os.path.join(folder_name, "solar_data.csv")
+                file_path = os.path.join(folder_name, "solar_data_1.csv")
 
                 # Write data to the CSV file
                 with open(file_path, mode='w', newline='') as file:
