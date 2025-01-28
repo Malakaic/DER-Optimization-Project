@@ -5,8 +5,8 @@ import numpy as np
 
 def main():
     # Definitions for API key:
-    lon = -86.87
-    lat = 48
+    lon = -86.908
+    lat = 40.426
     solar_data_type = "solar_irradiance"
     year = 2023
     user_email = "malakaicrane@gmail.com"
@@ -30,7 +30,7 @@ def main():
     panel_area = 1.6 * 1  # m^2 per panel (example size)
 
     # Calculate solar power from CSV
-    calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
+    #calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
 
 def download_solar_csv(lon, lat, solar_data_type, year, user_email, api_key, solar_data_file):
     """
@@ -52,10 +52,15 @@ def download_solar_csv(lon, lat, solar_data_type, year, user_email, api_key, sol
     except Exception as e:
         print(f"An error occurred: {e}")
 
+if __name__ == "__main__":
+    main()
+
+
+""""
 def calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area):
-    """
-    Reads solar irradiance data from a CSV file, calculates power output, and saves it to another CSV file with the required columns.
-    """
+    
+    # Reads solar irradiance data from a CSV file, calculates power output, and saves it to another CSV file with the required columns.
+    
     try:
         # Read CSV, skipping irrelevant rows
         df = pd.read_csv(solar_data_file, skiprows=29)
@@ -91,6 +96,4 @@ def calculate_solar_power_with_columns(solar_data_file, output_file, panel_capac
     
     except Exception as e:
         print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    main()
+"""
