@@ -16,14 +16,8 @@ def main():
     losses = 10  # System losses as a percentage - Required
     array_type = 1  # Fixed array type - Required (0 = fixed - open rack, 1 = fixed - roof mount, 2 = 1-axis, 3 = 1-axis backtracking, 4 = 2-axis )
     module_type = 0  # Module type - Required (0 = standard, 1 = premium, 2 = thin film)
-    dc_ac_ratio = 1.2  # DC to AC ratio - not required
-    inv_eff = 96.0  # Inverter efficiency in percentage - not required
-    gcr = 0.4  # Ground coverage ratio - not required
     dataset = "nsrdb"  # Dataset to use - TMY data
-    radius = 0  # Radius for dataset lookup - Not required, search radius for closest climate data
-    soiling = "12|4|45|23|9|99|67|12.54|54|9|0|7.6"  # Monthly soiling losses - Not required
-    albedo = 0.3  # Albedo value - not required, ground reflectance 
-    bifaciality = 0.7  # Bifaciality factor - not required, ratio of rear side efficiency to front side
+
 
     # Set the folder path for "Environmental Data"
     folder_name = "Environmental Data"
@@ -32,17 +26,17 @@ def main():
     os.makedirs(folder_path, exist_ok=True)
 
     # Define file paths
-    solar_data_file = os.path.join(folder_path, "solar_data_V3.csv")
+    solar_data_file = os.path.join(folder_path, "solar_data_V4.csv")
     #output_file = os.path.join(folder_path, "solar_power_output.csv")
 
     # Download the CSV data
-    download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality, solar_data_file)
+    download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dataset, solar_data_file)
 
 
     # Calculate solar power from CSV
     #calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
 
-def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality, solar_data_file):
+def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dataset, solar_data_file):
     """
     Downloads CSV data from the given API URL and saves it to the 'Environmental Data' folder.
     """
@@ -59,14 +53,7 @@ def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses
         "losses": losses,
         "array_type": array_type,
         "module_type": module_type,
-        "dc_ac_ratio": dc_ac_ratio,
-        "inv_eff": inv_eff,
-        "gcr": gcr,
         "dataset": dataset,
-        "radius": radius,
-        "soiling": soiling,
-        "albedo": albedo,
-        "bifaciality": bifaciality,
         "timeframe": "hourly"  # Request hourly data
     }
     

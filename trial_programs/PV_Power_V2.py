@@ -3,7 +3,7 @@ import json
 import csv
 import os
 
-def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality):
+def get_pvwatts_hourly_data(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality):
     """
     Fetch hourly solar production data from the NREL PVWatts API and save it as a CSV file.
     """
@@ -13,7 +13,8 @@ def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, lo
     # API request parameters
     params = {
         "api_key": api_key,
-        "address": address,
+        "lat": lat,
+        "lon": lon,
         "system_capacity": system_capacity,
         "azimuth": azimuth,
         "tilt": tilt,
@@ -49,7 +50,7 @@ def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, lo
                 os.makedirs(folder_name, exist_ok=True)
 
                 # File path for the CSV
-                file_path = os.path.join(folder_name, "solar_data_1.csv")
+                file_path = os.path.join(folder_name, "solar_data_V2.csv")
 
                 # Write data to the CSV file
                 with open(file_path, mode='w', newline='') as file:
@@ -72,20 +73,22 @@ def get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, lo
 
 # Example usage
 api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"  # Replace with your actual API key
-address = "west lafayette, in"
-system_capacity = 1  # System capacity in kW
-azimuth = 180  # Azimuth angle in degrees
-tilt = 10  # Tilt angle in degrees
-losses = 14  # System losses as a percentage
-array_type = 1  # Fixed array type
-module_type = 0  # Module type
-dc_ac_ratio = 1.2  # DC to AC ratio
-inv_eff = 96.0  # Inverter efficiency in percentage
-gcr = 0.4  # Ground coverage ratio
-dataset = "nsrdb"  # Dataset to use
-radius = 0  # Radius for dataset lookup
-soiling = "12|4|45|23|9|99|67|12.54|54|9|0|7.6"  # Monthly soiling losses
-albedo = 0.3  # Albedo value
-bifaciality = 0.7  # Bifaciality factor
+#address = "west lafayette, in"
+lat = 48
+lon = -86.87
+system_capacity = 10  # System capacity in kW - Required
+azimuth = 180  # Azimuth angle in degrees - Required
+tilt = 20  # Tilt angle in degrees - Required
+losses = 10  # System losses as a percentage - Required
+array_type = 1  # Fixed array type - Required (0 = fixed - open rack, 1 = fixed - roof mount, 2 = 1-axis, 3 = 1-axis backtracking, 4 = 2-axis )
+module_type = 0  # Module type - Required (0 = standard, 1 = premium, 2 = thin film)
+dc_ac_ratio = 1.2  # DC to AC ratio - not required
+inv_eff = 96.0  # Inverter efficiency in percentage - not required
+gcr = 0.4  # Ground coverage ratio - not required
+dataset = "nsrdb"  # Dataset to use - TMY data
+radius = 0  # Radius for dataset lookup - Not required, search radius for closest climate data
+soiling = "12|4|45|23|9|99|67|12.54|54|9|0|7.6"  # Monthly soiling losses - Not required
+albedo = 0.3  # Albedo value - not required, ground reflectance 
+bifaciality = 0.7  # Bifaciality factor - not required, ratio of rear side efficiency to front side
 
-get_pvwatts_hourly_data(api_key, address, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality)
+get_pvwatts_hourly_data(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dc_ac_ratio, inv_eff, gcr, dataset, radius, soiling, albedo, bifaciality)
