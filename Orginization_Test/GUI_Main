@@ -1,0 +1,180 @@
+import csv
+import os
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk
+import requests
+from Menu_Bar import MenuBar
+from Inputs import InputPage
+
+
+
+# Other parts of your class remain unchanged...
+
+ # Initialize PV-related variables
+pv_counter = 1  # Start from 1 or 0 based on your preference
+pv_data_dict = {}  # Dictionary to store PV data
+wind_counter = 1  # Start from 1 or 0 based on your preference
+wind_data_dict = {}  # Dictionary to store Wind data
+battery_counter = 1  # Start from 1 or 0 based on your preference
+battery_data_dict = {}  # Dictionary to store Battery data
+
+
+
+# DER GUI Class
+class EnergyResourceApp(tk.Tk):
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Energy Resource Optimization")
+
+        # Create the main frame
+        self.main_frame = ttk.Frame(self.master)
+        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Create the menu bar
+        self.menu = MenuBar(master)
+
+        # Create the left side frame
+        self.left_frame = ttk.Frame(self.main_frame)
+        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        # Create the right side frame
+        self.right_frame = ttk.Frame(self.main_frame)
+        self.right_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+
+        # Configure grid weights for scaling
+        self.left_frame.grid_rowconfigure(0, weight=1)
+        self.left_frame.grid_rowconfigure(1, weight=1)
+        self.right_frame.grid_rowconfigure(0, weight=1)
+        self.right_frame.grid_rowconfigure(1, weight=1)
+
+        self.left_frame.grid_columnconfigure(0, weight=1)
+        self.left_frame.grid_columnconfigure(1, weight=1)
+        self.left_frame.grid_columnconfigure(2, weight=1)
+        self.left_frame.grid_columnconfigure(3, weight=1)
+
+        self.right_frame.grid_columnconfigure(0, weight=1)
+        self.right_frame.grid_columnconfigure(1, weight=1)
+        self.right_frame.grid_columnconfigure(2, weight=1)
+        self.right_frame.grid_columnconfigure(3, weight=1)
+
+        # Create the location section
+        self.create_location_section(self.left_frame)
+
+        # Create the load demand section
+        self.loads = InputPage(self)
+
+        # Create the weighted objectives section
+        #self.create_weighted_objectives_section(self.right_frame)
+
+        # Create the DER section
+       # self.create_der_section(self.right_frame)
+
+        # Create the calculate button
+        self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate)
+        self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
+        self.calculate_button.grid(row=1, column=0, columnspan=2, pady=10)
+
+
+    def create_location_section(self, frame):
+        """Creates a location section for data inputs."""
+
+
+        location_frame = ttk.LabelFrame(frame, text="Location")
+        location_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        tk.Label(location_frame, text="City:").grid(row=0, column=0, padx=5)
+        self.city_entry = tk.Entry(location_frame)
+        self.city_entry.grid(row=0, column=1, padx=5)
+
+        tk.Label(location_frame, text="State:").grid(row=0, column=2, padx=5)
+        self.state_entry = tk.Entry(location_frame)
+        self.state_entry.grid(row=0, column=3, padx=5)
+
+        tk.Label(location_frame, text="Country:").grid(row=1, column=0, padx=5)
+        self.country_entry = tk.Entry(location_frame)
+        self.country_entry.grid(row=1, column=1, padx=5)
+
+        location_frame.grid_rowconfigure(0, weight=1)
+        location_frame.grid_rowconfigure(1, weight=1)
+
+    
+
+
+
+
+
+    """" calculate results section """
+
+    def gather_input_data(self):
+        """Retrieve user input data"""
+        
+        city = self.city_entry.get()
+        state = self.state_entry.get()
+        country = self.country_entry.get()
+        return city, state, country
+
+    def get_coordinates(self, city, state, country):
+        """Retrieve coordinates for the given city, state, and country."""
+        # LocationIQ API key (insert your API key here)
+        self.api_key = "pk.06116c260378fbaf82bb1d519c2e0e2d"
+        self.base_url = "https://us1.locationiq.com/v1/search.php"
+
+        location_str = f"{city}, {state}, {country}"
+
+        params = {
+            'key': self.api_key,
+            'q': location_str,
+            'format': 'json'
+        }
+
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()  # Raise an error for bad responses
+
+            data = response.json()
+            if data:
+                # Get the latitude and longitude from the response
+                latitude = data[0]['lat']
+                longitude = data[0]['lon']
+                return latitude,longitude
+            else:
+                return None, None
+        except requests.exceptions.RequestException as e:
+            return None, None
+
+
+    def calculate(self):
+        """Perform calculations, print results, and open results window."""
+
+        city, state, country = self.gather_input_data()
+
+        if not city or not state or not country:
+            self.open_results_window("Error", "Please enter a valid city, state, and country.")
+            return
+    
+        latitude, longitude = self.get_coordinates(city, state, country)
+
+        if latitude and longitude:
+            # Open results window to display the coordinates
+            self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
+        else:
+            self.open_results_window("Error", "Could not retrieve coordinates.")
+
+    def open_results_window(self, message):
+        """Open a new window to display the calculation results."""
+        results_window = tk.Toplevel(self.master)
+        results_window.title("Calculation Results")
+
+        results_frame = ttk.Frame(results_window)
+        results_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        tk.Label(results_frame, text="Calculation Results", font=('Helvetica', 16)).pack(pady=10)
+
+        # Display latitude and longitude
+        tk.Label(results_frame, text=message).pack(anchor='w')
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = EnergyResourceApp(root)
+    root.mainloop()
