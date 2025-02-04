@@ -14,6 +14,8 @@ def submit_input():
         messagebox.showwarning("Input Error", "Please enter all fields.")
 
 def create_gui():
+
+    print ("create gui")
     # Create the main window
     root = tk.Tk()
     root.title("Location Input")
@@ -39,4 +41,6 @@ def create_gui():
     root.mainloop()
 
 if __name__ == "__main__":
+    print("gui file opened")
     create_gui()
+

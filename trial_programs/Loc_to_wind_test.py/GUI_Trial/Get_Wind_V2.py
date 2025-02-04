@@ -2,9 +2,25 @@ import os
 import requests
 import pandas as pd
 import numpy as np
+import json
+
+# Cache dictionary to hold previously fetched results
+cache = {}
 
 def wind_function(latitude, longitude):
-    # Definitions for API key:
+    # Check if latitude and longitude are valid
+    if not (isinstance(latitude, (int, float)) and isinstance(longitude, (int, float))):
+        raise ValueError("Latitude and longitude must be numeric.")
+
+    # Cache key
+    cache_key = f"{latitude},{longitude}"
+    
+    # If data is already cached, use it
+    if cache_key in cache:
+        print("Using cached data.")
+        return cache[cache_key]
+
+    # Definitions for API key
     lon = longitude
     lat = latitude
     wind_data_type = "windspeed_100m"
@@ -22,15 +38,21 @@ def wind_function(latitude, longitude):
     wind_speed_file = os.path.join(folder_path, "wind_data.csv")
     output_file = os.path.join(folder_path, "wind_power_output.csv")
 
-    # Download the CSV data
-    download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
+    # Download the CSV data if it doesn't already exist
+    if not os.path.exists(wind_speed_file):
+        download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
 
     turbine_capacity = 1500  # kW
     turbine_efficiency = 35  # percentage
     rotor_diameter = 77  # meters
 
     # Calculate wind power from CSV
-    calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter)
+    total_power = calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter)
+    
+    # Store result in cache
+    cache[cache_key] = total_power
+    return total_power
+
 
 def download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file):
     """
@@ -50,49 +72,52 @@ def download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_
             print(f"Failed to download data. HTTP Status Code: {response.status_code}")
             print(f"Error Details: {response.text}")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while downloading wind data: {e}")
 
 def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter):
     """
     Reads wind speed data from a CSV file, calculates power output, and saves it to another CSV file with the required columns.
     """
     try:
-        # Read CSV, skipping irrelevant rows
-        df = pd.read_csv(wind_speed_file, skiprows=2)
+        # Read CSV, skipping irrelevant rows and limiting the amount of data read
+        df = pd.read_csv(wind_speed_file, skiprows=2, usecols=lambda column: column not in ['Unnamed: 0'])
 
-        # Verify necessary columns are present
+        # Check for necessary columns and extract wind speed
         required_columns = ['Year', 'Month', 'Day', 'Hour', 'Minute']
         for col in required_columns:
             if col not in df.columns:
                 raise ValueError(f"The column '{col}' is missing from the data.")
 
-        # Extract the wind speed column
         wind_speed_column = next((col for col in df.columns if "wind speed" in col.lower()), None)
         if not wind_speed_column:
             raise ValueError("Wind speed column not found in the data.")
+
+        # Calculate power output only for valid entries
         df['wind_speed'] = df[wind_speed_column]
-
-        # Calculate power output (in kW) for each wind speed before adjustments
-        air_density = 1.225  # kg/m^3 (standard air density at sea level)
+        air_density = 1.225  # kg/m^3
         swept_area = np.pi * (rotor_diameter / 2) ** 2  # m^2
-        df['power_raw'] = 0.5 * air_density * swept_area * (df['wind_speed'] ** 3) * turbine_efficiency / 1000  # kW
-
-        # Apply turbine capacity limit
-        df['power_output'] = df['power_raw'].apply(lambda x: min(x, turbine_capacity))
+        
+        # Calculate power output and apply capacity limits in one go
+        df['power_output'] = np.minimum(
+            0.5 * air_density * swept_area * (df['wind_speed'] ** 3) * (turbine_efficiency / 1000),
+            turbine_capacity
+        )
 
         # Select and reorder columns for output
-        output_columns = required_columns + ['wind_speed', 'power_raw', 'power_output']
+        output_columns = required_columns + ['wind_speed', 'power_output']
         df[output_columns].to_csv(output_file, index=False)
 
         print(f"Detailed wind power output saved to: {output_file}")
 
-        # Calculate total power output
+        # Calculate and print total power output
         total_power_kwh = df['power_output'].sum()
         print(f"Total wind power produced: {total_power_kwh:.2f} kWh")
         return total_power_kwh
     
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while calculating wind power: {e}")
 
 if __name__ == "__main__":
+    # Example usage
+    # Replace with actual latitude and longitude
     wind_function()
