@@ -6,11 +6,50 @@ import requests
 
 
 
+
 class Calculate_Button(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        
+    
+    def gather_input_data(self):
+        """Retrieve user input data"""
+            
+        city = self.city_entry.get()
+        state = self.state_entry.get()
+        country = self.country_entry.get()
+        return city, state, country
+
+    def get_coordinates(self, city, state, country):
+        """Retrieve coordinates for the given city, state, and country."""
+        global latitude, longitude  #Declare global variables
+        # LocationIQ API key (insert your API key here)
+        self.api_key = "pk.06116c260378fbaf82bb1d519c2e0e2d"
+        self.base_url = "https://us1.locationiq.com/v1/search.php"
+
+        location_str = f"{city}, {state}, {country}"
+
+        params = {
+            'key': self.api_key,
+            'q': location_str,
+            'format': 'json'
+        }
+
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()  # Raise an error for bad responses
+
+            data = response.json()
+            if data:
+                # Get the latitude and longitude from the response
+                latitude = data[0]['lat']
+                longitude = data[0]['lon']
+                return latitude,longitude
+            else:
+                return None, None
+        except requests.exceptions.RequestException as e:
+            return None, None
+
     def calculate(self):
         """Perform calculations, print results, and open results window."""
 
@@ -40,3 +79,8 @@ class Calculate_Button(tk.Frame):
 
         # Display latitude and longitude
         tk.Label(results_frame, text=message).pack(anchor='w')
+          
+
+   
+
+
