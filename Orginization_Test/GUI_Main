@@ -5,7 +5,9 @@ from tkinter import filedialog, messagebox, ttk
 import requests
 from Menu_Bar import MenuBar
 from Inputs import InputPage
-
+from Objectives import Objective_Menu
+from DERs import Der_menu_page
+from Calculate import Calculate_Button
 
 
 # Other parts of your class remain unchanged...
@@ -61,16 +63,20 @@ class EnergyResourceApp(tk.Tk):
         self.create_location_section(self.left_frame)
 
         # Create the load demand section
-        self.loads = InputPage(self)
+        self.load_page = InputPage(self.master)
+        self.load_page.create_load_demand_section(self.left_frame)
 
         # Create the weighted objectives section
-        #self.create_weighted_objectives_section(self.right_frame)
+        self.objective_page = Objective_Menu(self.master)
+        self.objective_page.create_weighted_objectives_section(self.right_frame)        #self.create_weighted_objectives_section(self.right_frame)
 
-        # Create the DER section
-       # self.create_der_section(self.right_frame)
+        #Create the DER section
+        self.der_page = Der_menu_page(self.master)
+        self.der_page.create_der_section(self.right_frame)
 
+        self.calculate_button = Calculate_Button(self.master)
         # Create the calculate button
-        self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate)
+        self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate_button.calculate)
         self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
         self.calculate_button.grid(row=1, column=0, columnspan=2, pady=10)
 
@@ -97,81 +103,42 @@ class EnergyResourceApp(tk.Tk):
         location_frame.grid_rowconfigure(0, weight=1)
         location_frame.grid_rowconfigure(1, weight=1)
 
-    
-
-
-
-
-
-    """" calculate results section """
-
     def gather_input_data(self):
-        """Retrieve user input data"""
-        
-        city = self.city_entry.get()
-        state = self.state_entry.get()
-        country = self.country_entry.get()
-        return city, state, country
+            """Retrieve user input data"""
+            
+            city = self.city_entry.get()
+            state = self.state_entry.get()
+            country = self.country_entry.get()
+            return city, state, country
 
     def get_coordinates(self, city, state, country):
-        """Retrieve coordinates for the given city, state, and country."""
-        # LocationIQ API key (insert your API key here)
-        self.api_key = "pk.06116c260378fbaf82bb1d519c2e0e2d"
-        self.base_url = "https://us1.locationiq.com/v1/search.php"
+            """Retrieve coordinates for the given city, state, and country."""
+            # LocationIQ API key (insert your API key here)
+            self.api_key = "pk.06116c260378fbaf82bb1d519c2e0e2d"
+            self.base_url = "https://us1.locationiq.com/v1/search.php"
 
-        location_str = f"{city}, {state}, {country}"
+            location_str = f"{city}, {state}, {country}"
 
-        params = {
-            'key': self.api_key,
-            'q': location_str,
-            'format': 'json'
-        }
+            params = {
+                'key': self.api_key,
+                'q': location_str,
+                'format': 'json'
+            }
 
-        try:
-            response = requests.get(self.base_url, params=params)
-            response.raise_for_status()  # Raise an error for bad responses
+            try:
+                response = requests.get(self.base_url, params=params)
+                response.raise_for_status()  # Raise an error for bad responses
 
-            data = response.json()
-            if data:
-                # Get the latitude and longitude from the response
-                latitude = data[0]['lat']
-                longitude = data[0]['lon']
-                return latitude,longitude
-            else:
+                data = response.json()
+                if data:
+                    # Get the latitude and longitude from the response
+                    latitude = data[0]['lat']
+                    longitude = data[0]['lon']
+                    return latitude,longitude
+                else:
+                    return None, None
+            except requests.exceptions.RequestException as e:
                 return None, None
-        except requests.exceptions.RequestException as e:
-            return None, None
-
-
-    def calculate(self):
-        """Perform calculations, print results, and open results window."""
-
-        city, state, country = self.gather_input_data()
-
-        if not city or not state or not country:
-            self.open_results_window("Error", "Please enter a valid city, state, and country.")
-            return
-    
-        latitude, longitude = self.get_coordinates(city, state, country)
-
-        if latitude and longitude:
-            # Open results window to display the coordinates
-            self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
-        else:
-            self.open_results_window("Error", "Could not retrieve coordinates.")
-
-    def open_results_window(self, message):
-        """Open a new window to display the calculation results."""
-        results_window = tk.Toplevel(self.master)
-        results_window.title("Calculation Results")
-
-        results_frame = ttk.Frame(results_window)
-        results_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        tk.Label(results_frame, text="Calculation Results", font=('Helvetica', 16)).pack(pady=10)
-
-        # Display latitude and longitude
-        tk.Label(results_frame, text=message).pack(anchor='w')
 
 
 if __name__ == "__main__":
