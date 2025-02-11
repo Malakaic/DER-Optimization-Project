@@ -3,7 +3,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
-from Inputs import InputPage
+#from Inputs import InputPage
 
 
 
