@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
+from Inputs import InputPage
 
 
 
@@ -11,13 +12,15 @@ class Calculate_Button(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+        self.location = InputPage(parent)
+        self.location.create_location_section(parent)
     
     def gather_input_data(self):
         """Retrieve user input data"""
             
-        city = self.city_entry.get()
-        state = self.state_entry.get()
-        country = self.country_entry.get()
+        city = self.location.get_city.get()
+        state = self.location.get_state.get()
+        country = self.location.get_country.get()
         return city, state, country
 
     def get_coordinates(self, city, state, country):

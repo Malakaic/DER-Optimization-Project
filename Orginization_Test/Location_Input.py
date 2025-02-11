@@ -11,7 +11,7 @@ class Location(tk.Frame):
         self.parent = parent
 
 
-    def create_location_section(self, frame):
+    def create_location_section(self,frame):
             """Creates a location section for data inputs."""
 
 

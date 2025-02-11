@@ -8,7 +8,6 @@ from Inputs import InputPage
 from Objectives import Objective_Menu
 from DERs import Der_menu_page
 from Calculate import Calculate_Button
-from Location_Input import Location
 
 
 
@@ -21,6 +20,7 @@ wind_counter = 1  # Start from 1 or 0 based on your preference
 wind_data_dict = {}  # Dictionary to store Wind data
 battery_counter = 1  # Start from 1 or 0 based on your preference
 battery_data_dict = {}  # Dictionary to store Battery data
+
 
 
 
@@ -62,7 +62,7 @@ class EnergyResourceApp(tk.Tk):
         self.right_frame.grid_columnconfigure(3, weight=1)
 
         # Create the location section
-        self.location_page = Location(self.master)
+        self.location_page = InputPage(self.master)
         self.location_page.create_location_section(self.left_frame)
 
         # Create the load demand section
