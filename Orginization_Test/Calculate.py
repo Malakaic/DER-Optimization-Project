@@ -9,23 +9,26 @@ from Inputs import InputPage
 
 
 class Calculate_Button(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent,location_page):
         super().__init__(parent)
         self.parent = parent
-       # self.location = InputPage(parent)
+        self.location_page =  location_page
       #  self.location.create_location_section(parent)
     
     def gather_input_data(self):
         """Retrieve user input data"""
-            
-        city = self.location.get_city.get()
-        state = self.location.get_state.get()
-        country = self.location.get_country.get()
+        
+        #Declare Global Variables
+        global city, state, country
+
+        city = self.location_page.city_entry.get()
+        state = self.location_page.state_entry.get()
+        country = self.location_page.country_entry.get()
+
         return city, state, country
 
     def get_coordinates(self, city, state, country):
         """Retrieve coordinates for the given city, state, and country."""
-        global latitude, longitude  #Declare global variables
         # LocationIQ API key (insert your API key here)
         self.api_key = "pk.06116c260378fbaf82bb1d519c2e0e2d"
         self.base_url = "https://us1.locationiq.com/v1/search.php"

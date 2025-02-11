@@ -68,6 +68,7 @@ class EnergyResourceApp(tk.Tk):
         # Create the location section
         self.location_page = InputPage(self.master)
         self.location_page.create_location_section(self.left_frame)
+        
 
         # Create the load demand section
         self.load_page = LoadDemandSection(self.master)
@@ -81,7 +82,7 @@ class EnergyResourceApp(tk.Tk):
         self.der_page = Der_menu_page(self.master)
         self.der_page.create_der_section(self.right_frame)
 
-        self.calculate_button = Calculate_Button(self.main_frame)
+        self.calculate_button = Calculate_Button(self.master, self.location_page)
         # Create the calculate button
         self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate_button.calculate)
         self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
