@@ -36,20 +36,20 @@ class InputPage(tk.Frame):
     def create_load_demand_section(self, frame):
             """Creates a load demand section."""
             load_frame = ttk.LabelFrame(frame, text="Load Demand")
-            load_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+            load_frame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
 
             self.load_choice = tk.StringVar(value="CSV Entry")
             csv_radiobutton = tk.Radiobutton(load_frame, text="CSV Entry", variable=self.load_choice, value="CSV Entry", command=self.toggle_load_input)
-            csv_radiobutton.grid(row=0, column=0)
+            csv_radiobutton.grid(row=2, column=0)
 
             manual_radiobutton = tk.Radiobutton(load_frame, text="Manual Entry", variable=self.load_choice, value="Manual Entry", command=self.toggle_load_input)
-            manual_radiobutton.grid(row=0, column=1)
+            manual_radiobutton.grid(row=2, column=1)
 
             self.csv_entry = tk.Entry(load_frame, state="disabled")
-            self.csv_entry.grid(row=1, column=0, padx=5)
+            self.csv_entry.grid(row=3, column=0, padx=5)
 
             self.csv_button = tk.Button(load_frame, text="Browse", command=self.browse_csv, state="disabled")
-            self.csv_button.grid(row=1, column=1)
+            self.csv_button.grid(row=3, column=1)
 
             # Monthly entries
             self.monthly_entries = {}
@@ -60,7 +60,7 @@ class InputPage(tk.Frame):
                 self.monthly_entries[month] = entry
 
             # Create a new grid rate input section below monthly entries
-            tk.Label(load_frame, text="Grid Rate ($/kWh):").grid(row=14, column=0, padx=5, pady=(10, 0))
+            tk.Label(load_frame, text="Grid Rate ($/kWh):").grid(row=13, column=0, padx=5, pady=(10, 0))
             self.grid_rate_entry = tk.Entry(load_frame)
             self.grid_rate_entry.grid(row=14, column=1, padx=5)
 

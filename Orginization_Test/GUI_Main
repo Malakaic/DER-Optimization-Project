@@ -32,7 +32,7 @@ class EnergyResourceApp(tk.Tk):
 
         # Create the main frame
         self.main_frame = ttk.Frame(self.master)
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # Create the menu bar
         self.menu = MenuBar(master)
@@ -46,6 +46,10 @@ class EnergyResourceApp(tk.Tk):
         self.right_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 
         # Configure grid weights for scaling
+        self.main_frame.grid_rowconfigure(0, weight=1)  # Main frame takes all available vertical space
+        self.main_frame.grid_columnconfigure(0, weight=1, uniform="equal")  # Left frame takes horizontal space
+        self.main_frame.grid_columnconfigure(1, weight=1, uniform="equal")
+        
         self.left_frame.grid_rowconfigure(0, weight=1)
         self.left_frame.grid_rowconfigure(1, weight=1)
         self.right_frame.grid_rowconfigure(0, weight=1)
@@ -58,8 +62,8 @@ class EnergyResourceApp(tk.Tk):
 
         self.right_frame.grid_columnconfigure(0, weight=1)
         self.right_frame.grid_columnconfigure(1, weight=1)
-        self.right_frame.grid_columnconfigure(2, weight=1)
-        self.right_frame.grid_columnconfigure(3, weight=1)
+        self.right_frame.grid_columnconfigure(0, weight=1)
+        self.right_frame.grid_columnconfigure(1, weight=1)
 
         # Create the location section
         self.location_page = InputPage(self.master)
@@ -77,7 +81,7 @@ class EnergyResourceApp(tk.Tk):
         self.der_page = Der_menu_page(self.master)
         self.der_page.create_der_section(self.right_frame)
 
-        self.calculate_button = Calculate_Button(self.master)
+        self.calculate_button = Calculate_Button(self.main_frame)
         # Create the calculate button
         self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate_button.calculate)
         self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
