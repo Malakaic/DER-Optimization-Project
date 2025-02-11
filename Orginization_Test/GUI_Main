@@ -32,7 +32,7 @@ class EnergyResourceApp(tk.Tk):
 
         # Create the main frame
         self.main_frame = ttk.Frame(self.master)
-        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         # Create the menu bar
         self.menu = MenuBar(master)
