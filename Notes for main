@@ -6,3 +6,5 @@ update: curl only works in the terminal, took a sec to figure that out lol
 NREL API only works when parameters are shortened to lat and lon, in that order after the API key
 
 To seperate the json format from NREL, must have annual_avg_dni = data['outputs']['avg_dni']['annual'], etc
+
+2/11/2025
