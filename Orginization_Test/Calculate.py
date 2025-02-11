@@ -12,8 +12,8 @@ class Calculate_Button(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.location = InputPage(parent)
-        self.location.create_location_section(parent)
+       # self.location = InputPage(parent)
+      #  self.location.create_location_section(parent)
     
     def gather_input_data(self):
         """Retrieve user input data"""

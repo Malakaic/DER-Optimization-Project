@@ -1,7 +1,8 @@
 import csv
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-
+import Load_Inputs
+import Inputs
 
 
 class MenuBar(tk.Frame):

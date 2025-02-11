@@ -8,7 +8,7 @@ from Inputs import InputPage
 from Objectives import Objective_Menu
 from DERs import Der_menu_page
 from Calculate import Calculate_Button
-
+from Load_Inputs import LoadDemandSection
 
 
 # Other parts of your class remain unchanged...
@@ -70,7 +70,7 @@ class EnergyResourceApp(tk.Tk):
         self.location_page.create_location_section(self.left_frame)
 
         # Create the load demand section
-        self.load_page = InputPage(self.master)
+        self.load_page = LoadDemandSection(self.master)
         self.load_page.create_load_demand_section(self.left_frame)
 
         # Create the weighted objectives section
