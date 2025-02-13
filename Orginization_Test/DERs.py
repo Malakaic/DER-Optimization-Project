@@ -2,13 +2,23 @@ import csv
 import os
 import tkinter as tk
 import requests
-from tkinter import filedialog, messagebox, ttk   
+from tkinter import filedialog, messagebox, ttk
+import config
 
 
 class Der_menu_page (tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+        
+        self.pv_data_dict = config.pv_data_dict
+        self.wind_data_dict = config.wind_data_dict
+        self.battery_data_dict = config.battery_data_dict
+        self.pv_counter = config.pv_counter
+        self.wind_counter = config.wind_counter
+        self.battery_counter = config.battery_counter
+        
+        
     def create_der_section(self, frame):
 
             der_frame = ttk.LabelFrame(frame, text="Select DER Resources")
@@ -67,8 +77,6 @@ class Der_menu_page (tk.Frame):
                         # Save Button for PV
                         def save_pv_data():
 
-                            global pv_counter,pv_data_dict
-
                             # Create a list with the data for the current PV
                             pv_data = [
                                 pv_name_entry.get(),  # Name
@@ -79,7 +87,7 @@ class Der_menu_page (tk.Frame):
 
                             # Check if a save with the same name already exists
                             existing_key = None
-                            for key, value in pv_data_dict.items():
+                            for key, value in config.pv_data_dict.items():
                                 if value[0] == pv_data[0]:  # Compare the "Name" field
                                     existing_key = key
 
@@ -89,15 +97,17 @@ class Der_menu_page (tk.Frame):
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{pv_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
                                     # Overwrite the existing save
-                                    pv_data_dict[existing_key] = pv_data
+                                    config.pv_data_dict[existing_key] = pv_data
+                                    print(f"PV data with name '{pv_data[0]}' overwritten.")
                                 else:
                                     # Prompt user to change the name
                                     messagebox.showinfo("Change Name", "Please change the name of the PV before saving.")
                             else:
                                 #Save Current Data
-                                pv_data_dict[pv_counter] = pv_data
+                                config.pv_data_dict[config.pv_counter] = pv_data
+                                print(f"PV data saved with name '{pv_data[0]}'.")
                                 # Increment the counter for the next save
-                                pv_counter += 1
+                                config.pv_counter += 1
 
                         pv_save_button = tk.Button(pv_frame, text="Save", command=save_pv_data)
                         pv_save_button.grid(row=6, column=0, columnspan=2, pady=10)
@@ -140,8 +150,6 @@ class Der_menu_page (tk.Frame):
                         # Save Button for Wind
                         def save_wind_data():
 
-                            global wind_counter,wind_data_dict
-
                             # Create a list with the data for the current turbine
                             wind_data = [
                                 wind_name_entry.get(),   # Name
@@ -153,7 +161,7 @@ class Der_menu_page (tk.Frame):
 
                             # Check if a save with the same name already exists
                             existing_key = None
-                            for key, value in wind_data_dict.items():
+                            for key, value in config.wind_data_dict.items():
                                 if value[0] == wind_data[0]:  # Compare the "Name" field
                                     existing_key = key
 
@@ -163,15 +171,17 @@ class Der_menu_page (tk.Frame):
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{wind_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
                                     # Overwrite the existing save
-                                    wind_data_dict[existing_key] = wind_data
+                                    config.wind_data_dict[existing_key] = wind_data
+                                    print(f"Wind data with name '{wind_data[0]}' overwritten.")
                                 else:
                                     # Prompt user to change the name
                                     messagebox.showinfo("Change Name", "Please change the name of the wind turbine before saving.")
                             else:
                                 #Save Current Data
-                                wind_data_dict[wind_counter] = wind_data
+                                config.wind_data_dict[config.wind_counter] = wind_data
+                                print(f"Wind data saved with name '{wind_data[0]}'.")
                                 # Increment the counter for the next save
-                                wind_counter += 1
+                                config.wind_counter += 1
                                 
                         wind_save_button = tk.Button(wind_frame, text="Save", command=save_wind_data)
                         wind_save_button.grid(row=5, column=0, columnspan=2, pady=10)
@@ -220,7 +230,6 @@ class Der_menu_page (tk.Frame):
 
                         # Save Button for Battery
                         def save_battery_data():
-                            global battery_counter,battery_data_dict
 
                             # Create a list with the data for the current battery
                             battery_data = [
@@ -234,7 +243,7 @@ class Der_menu_page (tk.Frame):
 
                             # Check if a save with the same name already exists
                             existing_key = None
-                            for key, value in battery_data_dict.items():
+                            for key, value in config.battery_data_dict.items():
                                 if value[0] == battery_data[0]:
                                     existing_key = key
 
@@ -244,15 +253,17 @@ class Der_menu_page (tk.Frame):
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{battery_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
                                     # Overwrite the existing save
-                                    battery_data_dict[existing_key] = battery_data
+                                    config.battery_data_dict[existing_key] = battery_data
+                                    print(f"Battery data with name '{battery_data[0]}' overwritten.")
                                 else:
                                     # Prompt user to change the name
                                     messagebox.showinfo("Change Name", "Please change the name of the battery before saving.")
                             else:
                                 #Save Current Data
-                                battery_data_dict[battery_counter] = battery_data
+                                config.battery_data_dict[config.battery_counter] = battery_data
+                                print(f"Battery data saved with name '{battery_data[0]}'.")
                                 # Increment the counter for the next save
-                                battery_counter += 1
+                                config.battery_counter += 1
 
                         battery_save_button = tk.Button(battery_frame, text="Save", command=save_battery_data)
                         battery_save_button.grid(row=6, column=0, columnspan=2, pady=10)
