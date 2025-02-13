@@ -4,6 +4,7 @@ import tkinter as tk
 import requests
 from tkinter import filedialog, ttk
 import Menu_Bar
+#from Calculate import Calculate_Button
 
 
 
@@ -11,6 +12,7 @@ class InputPage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+        
 
     def create_location_section(self,frame):
         """Creates a location section for data inputs."""
@@ -35,12 +37,11 @@ class InputPage(tk.Frame):
         location_frame.grid_rowconfigure(1, weight=1)
 
 
+#    def get_city(self):
+ #       return self.city_entry.get()
 
-    def get_city(self):
-        return self.city_entry.get()
+  #  def get_state(self):
+   #     return self.state_entry.get()
 
-    def get_state(self):
-        return self.state_entry.get()
-
-    def get_country(self):
-        return self.country_entry.get()
+    #def get_country(self):
+     #   return self.country_entry.get()
