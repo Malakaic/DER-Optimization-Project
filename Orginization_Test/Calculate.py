@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
+import Win_Solar_Copy
 #from Inputs import InputPage
 
 
@@ -19,7 +20,7 @@ class Calculate_Button(tk.Frame):
         """Retrieve user input data"""
         
         #Declare Global Variables
-        global city, state, country
+       # global city, state, country
 
         city = self.location_page.city_entry.get()
         state = self.location_page.state_entry.get()
@@ -50,7 +51,7 @@ class Calculate_Button(tk.Frame):
                 # Get the latitude and longitude from the response
                 latitude = data[0]['lat']
                 longitude = data[0]['lon']
-                return latitude,longitude
+                return float(latitude),float(longitude)
             else:
                 return None, None
         except requests.exceptions.RequestException as e:
@@ -64,12 +65,13 @@ class Calculate_Button(tk.Frame):
         if not city or not state or not country:
             self.open_results_window("Error", "Please enter a valid city, state, and country.")
             return
-    
+       # global latitude, longitude
         latitude, longitude = self.get_coordinates(city, state, country)
 
         if latitude and longitude:
             # Open results window to display the coordinates
             self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
+            Win_Solar_Copy.wind_function_wind_solar(latitude, longitude)
         else:
             self.open_results_window("Error", "Could not retrieve coordinates.")
 
