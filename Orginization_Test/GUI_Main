@@ -3,26 +3,13 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
+import config
 from Menu_Bar import MenuBar
 from Inputs import InputPage
 from Objectives import Objective_Menu
 from DERs import Der_menu_page
 from Calculate import Calculate_Button
 from Load_Inputs import LoadDemandSection
-
-
-# Other parts of your class remain unchanged...
-
- # Initialize PV-related variables
-pv_counter = 1  # Start from 1 or 0 based on your preference
-pv_data_dict = {}  # Dictionary to store PV data
-wind_counter = 1  # Start from 1 or 0 based on your preference
-wind_data_dict = {}  # Dictionary to store Wind data
-battery_counter = 1  # Start from 1 or 0 based on your preference
-battery_data_dict = {}  # Dictionary to store Battery data
-
-
-
 
 # DER GUI Class
 class EnergyResourceApp(tk.Tk):
