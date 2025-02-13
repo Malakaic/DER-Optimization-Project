@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
 import Wind_csv_save
+import Solar_PV_csv_save
 #from Inputs import InputPage
 
 
@@ -76,7 +77,10 @@ class Calculate_Button(tk.Frame):
         
         if latitude is not None and longitude is not None:
             try:
+                print ("pulling wind data")
                 Wind_csv_save.wind_function_main(self, latitude, longitude)
+                print ("pulling solar data")
+                Solar_PV_csv_save.solar_function(self, latitude, longitude)
                 self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
             except ValueError as e:
                 self.open_results_window(f"Error: {e}")
