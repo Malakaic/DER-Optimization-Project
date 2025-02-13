@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
+import Wind_csv_save
 #from Inputs import InputPage
 
 
@@ -72,6 +73,16 @@ class Calculate_Button(tk.Frame):
             self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
         else:
             self.open_results_window("Error", "Could not retrieve coordinates.")
+        
+        if latitude is not None and longitude is not None:
+            try:
+                Wind_csv_save.wind_function_main(self, latitude, longitude)
+                self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
+            except ValueError as e:
+                self.open_results_window(f"Error: {e}")
+        else:
+            self.open_results_window("Error", "Could not retrieve coordinates.")
+
 
     def open_results_window(self, message):
         """Open a new window to display the calculation results."""
