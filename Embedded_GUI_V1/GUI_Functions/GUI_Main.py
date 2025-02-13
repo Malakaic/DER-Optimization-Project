@@ -1,0 +1,94 @@
+import csv
+import os
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk
+import requests
+from Menu_Bar import MenuBar
+from Inputs import InputPage
+from Objectives import Objective_Menu
+from DERs import Der_menu_page
+from Calculate import Calculate_Button
+from Load_Inputs import LoadDemandSection
+
+
+# Other parts of your class remain unchanged...
+
+ # Initialize PV-related variables
+pv_counter = 1  # Start from 1 or 0 based on your preference
+pv_data_dict = {}  # Dictionary to store PV data
+wind_counter = 1  # Start from 1 or 0 based on your preference
+wind_data_dict = {}  # Dictionary to store Wind data
+battery_counter = 1  # Start from 1 or 0 based on your preference
+battery_data_dict = {}  # Dictionary to store Battery data
+
+
+
+
+# DER GUI Class
+class EnergyResourceApp(tk.Tk):
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Energy Resource Optimization")
+
+        # Create the main frame
+        self.main_frame = ttk.Frame(self.master)
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        # Create the menu bar
+        self.menu = MenuBar(master)
+
+        # Create the left side frame
+        self.left_frame = ttk.Frame(self.main_frame)
+        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        # Create the right side frame
+        self.right_frame = ttk.Frame(self.main_frame)
+        self.right_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+
+        # Configure grid weights for scaling
+        self.main_frame.grid_rowconfigure(0, weight=1)  # Main frame takes all available vertical space
+        self.main_frame.grid_columnconfigure(0, weight=1, uniform="equal")  # Left frame takes horizontal space
+        self.main_frame.grid_columnconfigure(1, weight=1, uniform="equal")
+        
+        self.left_frame.grid_rowconfigure(0, weight=1)
+        self.left_frame.grid_rowconfigure(1, weight=1)
+        self.right_frame.grid_rowconfigure(0, weight=1)
+        self.right_frame.grid_rowconfigure(1, weight=1)
+
+        self.left_frame.grid_columnconfigure(0, weight=1)
+        self.left_frame.grid_columnconfigure(1, weight=1)
+        self.left_frame.grid_columnconfigure(2, weight=1)
+        self.left_frame.grid_columnconfigure(3, weight=1)
+
+        self.right_frame.grid_columnconfigure(0, weight=1)
+        self.right_frame.grid_columnconfigure(1, weight=1)
+        self.right_frame.grid_columnconfigure(0, weight=1)
+        self.right_frame.grid_columnconfigure(1, weight=1)
+
+        # Create the location section
+        self.location_page = InputPage(self.master)
+        self.location_page.create_location_section(self.left_frame)
+
+        # Create the load demand section
+        self.load_page = LoadDemandSection(self.master)
+        self.load_page.create_load_demand_section(self.left_frame)
+
+        # Create the weighted objectives section
+        self.objective_page = Objective_Menu(self.master)
+        self.objective_page.create_weighted_objectives_section(self.right_frame)        #self.create_weighted_objectives_section(self.right_frame)
+
+        #Create the DER section
+        self.der_page = Der_menu_page(self.master)
+        self.der_page.create_der_section(self.right_frame)
+
+        self.calculate_button = Calculate_Button(self.main_frame)
+        # Create the calculate button
+        self.calculate_button = tk.Button(self.main_frame, text="Calculate", command=self.calculate_button.calculate)
+        self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
+        self.calculate_button.grid(row=1, column=0, columnspan=2, pady=10)
+
+ 
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = EnergyResourceApp(root)
+    root.mainloop()

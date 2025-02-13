@@ -6,7 +6,7 @@ import numpy as np
 # Cache dictionary to hold previously fetched results
 cache = {}
 
-def wind_function_main(self, latitude, longitude):
+def wind_function_wind_solar(latitude, longitude):
     # Check if latitude and longitude are valid
     if not (isinstance(latitude, (int, float)) and isinstance(longitude, (int, float))):
         raise ValueError("Latitude and longitude must be numeric.")
@@ -116,3 +116,7 @@ def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capa
     except Exception as e:
         print(f"An error occurred while calculating wind power: {e}")
 
+#if __name__ == "__main__":
+    # Example usage
+    # Replace with actual latitude and longitude
+    #wind_function()
