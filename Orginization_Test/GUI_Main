@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import requests
+import config
 from Menu_Bar import MenuBar
 from Inputs import InputPage
 from Objectives import Objective_Menu
@@ -21,7 +22,11 @@ wind_data_dict = {}  # Dictionary to store Wind data
 battery_counter = 1  # Start from 1 or 0 based on your preference
 battery_data_dict = {}  # Dictionary to store Battery data
 
-
+#Initialize weigted objective variables
+financial_weight = 25
+efficiency_weight = 25
+sustainability_weight = 25
+power_quality_weight = 25
 
 
 # DER GUI Class
