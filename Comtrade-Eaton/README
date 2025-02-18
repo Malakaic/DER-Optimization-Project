@@ -1,0 +1,154 @@
+# Comtrade Data Analyzer
+
+## Overview
+The **Comtrade Data Analyzer** is a Python-based application designed to process, analyze, and visualize waveform data from COMTRADE (Common Format for Transient Data Exchange) files. It provides utilities for extracting waveforms, detecting voltage events, computing harmonics and power factors, and saving the results in an organized format. This tool is highly beneficial for engineers and researchers working with power system measurements, enabling data analysis and visualization of electrical phenomena.
+
+## Features
+1. **Waveform Extraction:**
+   - Extracts voltage and current waveforms from COMTRADE data.
+   - Labels waveforms with appropriate channel identifiers.
+
+2. **Voltage Event Detection:**
+   - Identifies voltage sags and swells based on a configurable threshold.
+   - Captures the channel, time, and type of event.
+
+3. **Harmonic Analysis:**
+   - Uses Fast Fourier Transform (FFT) to compute harmonic content of voltage waveforms.
+   - Provides frequency and amplitude information for each harmonic.
+
+4. **Power Factor Calculation:**
+   - Calculates power factors by analyzing phase differences between voltage and current signals.
+
+5. **Waveform Visualization:**
+   - Generates plots of voltage and current waveforms.
+
+6. **Report Generation:**
+   - Saves the analysis results (waveforms, events, harmonics, and power factor) into CSV files for easy data manipulation and review.
+
+## How It Works
+The application leverages the COMTRADE format's configuration (`.cfg`) and data (`.dat`) files, processes the waveform data, and performs analyses as follows:
+
+1. **Initialization**:
+   - Load and parse the COMTRADE file format using the provided `.cfg` and `.dat` file paths.
+   - Extract timestamps and other relevant information.
+
+2. **Analysis**:
+   - Voltage and current signals are categorized into respective channels.
+   - Functionalities include:
+     - Event detection for voltage irregularities.
+     - Harmonic computation for detailed spectral analysis.
+     - Power factor calculation for performance metrics.
+
+3. **Visualization**:
+   - Plots of voltage and current waveforms are created for inspection.
+
+4. **Report Generation**:
+   - All generated analysis data is saved as CSV files in a specified output directory. The subcategories of CSV files include waveforms, detected events, harmonics, and power factor calculations.
+
+## How to Use
+
+### Prerequisites
+- **Python 3.7 or later** with the following libraries installed:
+  - `numpy`
+  - `pandas`
+  - `matplotlib`
+  - `scipy`
+  - `comtrade` (Python COMTRADE library for loading COMTRADE files)
+
+### Steps
+1. **Prepare Input Files:**
+   Ensure you have the `.cfg` and `.dat` files for the waveform data you want to analyze. These files are typically part of a COMTRADE dataset.
+
+2. **Set File Paths in the Code:**
+   - Update the `cfg_path` and `dat_path` variables to point to your `.cfg` and `.dat` COMTRADE files.
+
+3. **Run the Application:**
+   - Execute the Python script `Main.py`.
+   - During execution, the program will:
+     - Plot voltage and current waveforms.
+     - Print detected events and power factor results to the console.
+     - Save the analysis data in CSV format to the specified output directory.
+
+4. **Output Files:**
+   - Locate the generated reports in the `Analysis_Output` directory (or the directory you specify). The output includes:
+     - `waveforms.csv`: Voltage and current data over timestamps.
+     - `events.csv`: Table summarizing detected voltage events (sags/swells).
+     - `power_factor.csv`: Power factor calculations for each voltage/current pair.
+     - `harmonics_*.csv`: Harmonics data for each voltage waveform.
+
+### Customization
+- **Threshold for Voltage Events**:
+  Modify the `threshold` parameter in the `detect_sags_swells` method to adjust the sensitivity for sags/swells detection.
+- **Sampling Rate**:
+  Fine-tune the `sampling_rate` parameter in the `save_to_csv` method for accurate harmonic analysis.
+
+## How to Read the Output Information
+
+### Waveforms
+The `waveforms.csv` file contains sampled voltage and current data over time. Each column represents a channel, with the first column as the timestamp. Voltage and current channels are identified by their names (e.g., `Va`, `Ia`).
+
+- **Column Example**:
+  ```
+  Timestamp, Va, Vb, Vc, Ia, Ib, Ic
+  0.00001, 230.1, 229.9, 230.0, 10.1, 10.3, 10.2
+  ```
+
+### Detected Events
+The `events.csv` file lists voltage events (sags/swells) detected in the dataset. Each row specifies the channel, type of event, and the timestamp of occurrence.
+
+- **Column Example**:
+  ```
+  Channel, Event Type, Timestamp
+  Va, Voltage Sag, 0.005
+  Vc, Voltage Swell, 0.012
+  ```
+
+### Harmonic Analysis
+Harmonics data are stored in separate files, one for each voltage channel (e.g., `harmonics_Va.csv`, `harmonics_Vb.csv`). These files list harmonic frequencies and their corresponding amplitudes.
+
+- **Column Example**:
+  ```
+  Frequency (Hz), Va Harmonics
+  50, 12.1
+  100, 5.4
+  ```
+
+### Power Factor
+The `power_factor.csv` file provides power factor calculations for each voltage-current pair. Each row corresponds to a voltage channel and its associated current channel, along with the computed power factor.
+
+- **Column Example**:
+  ```
+  Voltage Channel, Current Channel, Power Factor
+  Va, Ia, 0.98
+  ```
+- **Console Output (Detected Events)**:
+  ```
+  Detected Events: [['Va', 'Voltage Sag', 0.005], ['Vc', 'Voltage Swell', 0.012]]
+  ```
+
+- **Saved Files**:
+  ```
+  Analysis_Output/
+  ├── waveforms.csv
+  ├── events.csv
+  ├── power_factor.csv
+  ├── harmonics_Va.csv
+  ├── harmonics_Vb.csv
+  ```
+
+## Conclusion
+The **Comtrade Data Analyzer** is a powerful tool for analyzing and visualizing electrical waveform data. By extracting key insights such as harmonics, power factor, and voltage irregularities, this application bridges the gap between raw power system data and actionable information. The modular design allows for future expansions and integrations with additional analysis methods or input/output formats.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+MIT License
+Copyright (c) 2023 Trim Labs
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Developer
+Developed by Trim Labs.
+
+If you encounter any issues or have suggestions, feel free to reach out!

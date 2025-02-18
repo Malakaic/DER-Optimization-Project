@@ -1,0 +1,8 @@
+EventID=200
+Description:    02 Jan '25 01:42:27.908 -0500 Sub-Cycle Disturbance WD Vbg Triggered
+Thu, 02 Jan 2025 01:42:27 -0500
+type: [CDateTime] element: [eProxyElement_Invalid] value: [Thu, 02 Jan 2025 01:42:27.908 -0500] unit: []
+type: [ETriggerState] element: [eProxyElement_Invalid] value: [eTrgState_Triggered] unit: []
+type: [std::string] element: [ePrxy_WD_Vbg] value: [Phase B Voltage Exceeded DVDT Threshold 48.000000 V] unit: []
+type: [uint32_t] element: [ePrxy_LastWaveformId] value: [99] unit: []
+type: [int32_t] element: [ePrxy_WaveformTriggerOffset] value: [0] unit: []
