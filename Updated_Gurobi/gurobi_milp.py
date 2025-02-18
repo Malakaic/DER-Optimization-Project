@@ -26,10 +26,10 @@ wind_df[["Month", "Day", "Hour"]] = wind_df[["Month", "Day", "Hour"]].astype(int
 power_data = pd.merge(solar_df, wind_df, on=["Month", "Day", "Hour"], how="inner")
 
 # Parameters
-load_demand = 7000  # Total load demand in MWh/day
-solar_cost = 50    # Cost of solar PV energy ($/MWh)
-wind_cost = 30     # Cost of wind energy ($/MWh)
-grid_cost = 70     # Cost of grid energy ($/MWh)
+load_demand = 100  # Total hourly load demand (kW)
+solar_cost = 50    # Cost of solar PV energy ($/kWh)
+wind_cost = 52     # Cost of wind energy ($/kWh)
+grid_cost = 55     # Cost of grid energy ($/kWh)
 
 total_cost = 0
 total_solar = 0
@@ -74,7 +74,7 @@ for _, row in power_data.iterrows():
         total_cost += model.objVal
     
 # Convert results to DataFrame and save
-results_df = pd.DataFrame(results, columns=["Month", "Day", "Hour", "Solar Energy (MWh)", "Wind Energy (MWh)", "Grid Energy (MWh)", "Total Cost ($)"])
+results_df = pd.DataFrame(results, columns=["Month", "Day", "Hour", "Solar Energy (kWh)", "Wind Energy (kWh)", "Grid Energy (kWh)", "Total Cost ($)"])
 results_df.to_csv("optimized_results.csv", index=False)
 
 # Print yearly summary

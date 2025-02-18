@@ -134,8 +134,8 @@ class ComtradeAnalyzer:
 
 
 # Usage Example:
-cfg_path = os.path.abspath("Comtrade_Repository/wv00000061.cfg") # Use file name in the Comtrade Repository folder
-dat_path = os.path.abspath("Comtrade_Repository/wv00000061.dat") # Use file name in the Comtrade Repository folder
+cfg_path = r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Comtrade-Eaton\Comtrade_Repository\wv00000061.cfg" # Use file name in the Comtrade Repository folder
+dat_path = r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Comtrade-Eaton\Comtrade_Repository\wv00000061.dat" # Use file name in the Comtrade Repository folder
 
 analyzer = ComtradeAnalyzer(cfg_path, dat_path)
 analyzer.plot_waveforms()

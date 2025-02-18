@@ -1,0 +1,6 @@
+Channel,Event Type,Timestamp
+VBG,Voltage Sag,0.0
+VAG,Voltage Sag,0.0
+VNG,Voltage Sag,0.0
+VCG,Voltage Sag,0.0023111978
+VRG,Voltage Sag,0.0
