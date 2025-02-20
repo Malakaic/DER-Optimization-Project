@@ -42,10 +42,12 @@ model.optimize()
 
 # Results
 if model.status == GRB.OPTIMAL:
+    total_cost = (solar_energy.x * solar_cost) + (wind_energy.x * wind_cost) + (grid_energy.x * grid_cost)
+    
     print(f"Optimal Solution Found:")
     print(f"Solar Energy: {solar_energy.x:.2f} MWh")
     print(f"Wind Energy: {wind_energy.x:.2f} MWh")
     print(f"Grid Energy: {grid_energy.x:.2f} MWh")
-    print(f"Total Cost: ${model.objVal:.2f}")
+    print(f"Total Cost: ${total_cost:.2f}")  # Explicitly calculated
 else:
     print("No optimal solution found.")
