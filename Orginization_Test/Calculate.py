@@ -69,12 +69,6 @@ class Calculate_Button(tk.Frame):
        # global latitude, longitude
         latitude, longitude = self.get_coordinates(city, state, country)
 
-        if latitude and longitude:
-            # Open results window to display the coordinates
-            self.open_results_window(f"Latitude: {latitude}\nLongitude: {longitude}")
-        else:
-            self.open_results_window("Error", "Could not retrieve coordinates.")
-        
         if latitude is not None and longitude is not None:
             try:
                 print ("pulling wind data")
@@ -88,19 +82,6 @@ class Calculate_Button(tk.Frame):
             self.open_results_window("Error", "Could not retrieve coordinates.")
 
 
-    def open_results_window(self, message):
-        """Open a new window to display the calculation results."""
-        results_window = tk.Toplevel(self.master)
-        results_window.title("Calculation Results")
-
-        results_frame = ttk.Frame(results_window)
-        results_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        tk.Label(results_frame, text="Calculation Results", font=('Helvetica', 16)).pack(pady=10)
-
-        # Display latitude and longitude
-        tk.Label(results_frame, text=message).pack(anchor='w')
-          
     def open_results_window(self, message):
         """Open a new window to display the calculation results."""
         results_window = tk.Toplevel(self.master)

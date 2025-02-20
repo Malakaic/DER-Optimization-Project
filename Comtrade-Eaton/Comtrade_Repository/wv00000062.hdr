@@ -1,0 +1,16 @@
+EventID=198
+Description:    30 Dec '24 02:45:38.705 -0500 Sub-Cycle Disturbance WD Vbg Triggered
+Mon, 30 Dec 2024 02:45:38 -0500
+type: [CDateTime] element: [eProxyElement_Invalid] value: [Mon, 30 Dec 2024 02:45:38.705 -0500] unit: []
+type: [ETriggerState] element: [eProxyElement_Invalid] value: [eTrgState_Triggered] unit: []
+type: [std::string] element: [ePrxy_WD_Vbg] value: [Phase B Voltage Exceeded DVDT Threshold 48.000000 V] unit: []
+type: [uint32_t] element: [ePrxy_LastWaveformId] value: [98] unit: []
+type: [int32_t] element: [ePrxy_WaveformTriggerOffset] value: [0] unit: []
+EventID=199
+Description:    30 Dec '24 02:45:38.705 -0500 Sub-Cycle Disturbance WD Vcg Triggered
+Mon, 30 Dec 2024 02:45:38 -0500
+type: [CDateTime] element: [eProxyElement_Invalid] value: [Mon, 30 Dec 2024 02:45:38.705 -0500] unit: []
+type: [ETriggerState] element: [eProxyElement_Invalid] value: [eTrgState_Triggered] unit: []
+type: [std::string] element: [ePrxy_WD_Vcg] value: [Phase C Voltage Exceeded DVDT Threshold 48.000000 V] unit: []
+type: [uint32_t] element: [ePrxy_LastWaveformId] value: [98] unit: []
+type: [int32_t] element: [ePrxy_WaveformTriggerOffset] value: [0] unit: []
