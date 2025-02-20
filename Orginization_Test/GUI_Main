@@ -40,18 +40,23 @@ class EnergyResourceApp(tk.Tk):
         
         self.left_frame.grid_rowconfigure(0, weight=1)
         self.left_frame.grid_rowconfigure(1, weight=1)
-        self.right_frame.grid_rowconfigure(0, weight=1)
-        self.right_frame.grid_rowconfigure(1, weight=1)
-
+        self.left_frame.grid_rowconfigure(2, weight=1)
+        self.left_frame.grid_rowconfigure(3, weight=1)
+        
         self.left_frame.grid_columnconfigure(0, weight=1)
         self.left_frame.grid_columnconfigure(1, weight=1)
         self.left_frame.grid_columnconfigure(2, weight=1)
         self.left_frame.grid_columnconfigure(3, weight=1)
-
+        
+        self.right_frame.grid_rowconfigure(0, weight=1)
+        self.right_frame.grid_rowconfigure(1, weight=1)
+        self.right_frame.grid_rowconfigure(2, weight=1)
+        self.right_frame.grid_rowconfigure(3, weight=1)
+        
         self.right_frame.grid_columnconfigure(0, weight=1)
         self.right_frame.grid_columnconfigure(1, weight=1)
-        self.right_frame.grid_columnconfigure(0, weight=1)
-        self.right_frame.grid_columnconfigure(1, weight=1)
+        self.right_frame.grid_columnconfigure(2, weight=1)
+        self.right_frame.grid_columnconfigure(3, weight=1)
 
         # Create the location section
         self.location_page = InputPage(self.master)
