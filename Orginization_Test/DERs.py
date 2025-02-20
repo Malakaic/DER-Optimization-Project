@@ -11,13 +11,6 @@ class Der_menu_page (tk.Frame):
         super().__init__(parent)
         self.parent = parent
         
-        self.pv_data_dict = config.pv_data_dict
-        self.wind_data_dict = config.wind_data_dict
-        self.battery_data_dict = config.battery_data_dict
-        self.pv_counter = config.pv_counter
-        self.wind_counter = config.wind_counter
-        self.battery_counter = config.battery_counter
-        
         
     def create_der_section(self, frame):
 
@@ -44,7 +37,7 @@ class Der_menu_page (tk.Frame):
                 for idx, option in enumerate(selected):
                     # Create a new frame for each selected option
                     result_frame = ttk.LabelFrame(frame, text=option)
-                    result_frame.grid(row=2 + idx, column=0, sticky="nsew", padx=5, pady=5)
+                    result_frame.grid(row=4, column=idx, sticky="nsew", padx=5, pady=5)
 
                     if option == "PV":
                         pv_frame = ttk.Frame(result_frame)  # A container for better layout
