@@ -35,9 +35,12 @@ class Der_menu_page (tk.Frame):
 
                 # Loop through each selected option and create a new frame for each
                 for idx, option in enumerate(selected):
+                    # Calculate row and column for 2x2 grid
+                    row, col = divmod(idx, 2)
+
                     # Create a new frame for each selected option
                     result_frame = ttk.LabelFrame(frame, text=option)
-                    result_frame.grid(row=4, column=idx, sticky="nsew", padx=5, pady=5)
+                    result_frame.grid(row=row, column=1 + col, sticky="nsew", padx=5, pady=5)  # Shift to the right column
 
                     if option == "PV":
                         pv_frame = ttk.Frame(result_frame)  # A container for better layout

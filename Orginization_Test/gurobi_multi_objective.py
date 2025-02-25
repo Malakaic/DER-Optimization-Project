@@ -1,4 +1,5 @@
 import gurobipy as gp
+import config
 from gurobipy import GRB
 
 # Create a model
@@ -14,9 +15,9 @@ solar_max = 500     # Maximum solar PV output (MWh/day)
 wind_max = 500      # Maximum wind turbine output (MWh/day)
 
 # Weights: Prioritizing Cost Only
-w_cost = 1.0
-w_efficiency = 100
-w_sustainability = 0.0
+w_cost = config.financial_weight
+w_efficiency = config.efficiency_weight
+w_sustainability = config.sustainability_weight
 
 # Decision Variables
 solar_energy = model.addVar(vtype=GRB.CONTINUOUS, lb=0, ub=solar_max, name="SolarEnergy")
