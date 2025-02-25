@@ -101,7 +101,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.pv_data_dict[config.pv_counter] = pv_data
-                                print(f"PV data saved with name '{pv_data[0]}'.")
+                                print(f"PV data saved:'{pv_data}'.")
                                 # Increment the counter for the next save
                                 config.pv_counter += 1
 
@@ -175,7 +175,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.wind_data_dict[config.wind_counter] = wind_data
-                                print(f"Wind data saved with name '{wind_data[0]}'.")
+                                print(f"Wind data saved: '{wind_data}'.")
                                 # Increment the counter for the next save
                                 config.wind_counter += 1
                                 
@@ -257,7 +257,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.battery_data_dict[config.battery_counter] = battery_data
-                                print(f"Battery data saved with name '{battery_data[0]}'.")
+                                print(f"Battery data saved: '{battery_data}'.")
                                 # Increment the counter for the next save
                                 config.battery_counter += 1
 
