@@ -26,10 +26,11 @@ wind_df[["Month", "Day", "Hour"]] = wind_df[["Month", "Day", "Hour"]].astype(int
 power_data = pd.merge(solar_df, wind_df, on=["Month", "Day", "Hour"], how="inner")
 
 # Parameters
-load_demand = 100  # Total hourly load demand (kW)
+load_demand = 1000000  # Total hourly load demand (kW)
 solar_cost = 50    # Cost of solar PV energy ($/kWh)
 wind_cost = 52     # Cost of wind energy ($/kWh)
 grid_cost = 55     # Cost of grid energy ($/kWh)
+
 
 total_cost = 0
 total_solar = 0
@@ -58,7 +59,7 @@ for _, row in power_data.iterrows():
     
     # Constraints
     model.addConstr(solar_energy + wind_energy + grid_energy >= load_demand, "DemandConstraint")
-    
+
     # Optimize the model
     model.optimize()
     
