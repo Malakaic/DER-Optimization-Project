@@ -11,6 +11,8 @@ from DERs import Der_menu_page
 from Calculate import Calculate_Button
 from Load_Inputs import LoadDemandSection
 
+
+
 # DER GUI Class
 class EnergyResourceApp(tk.Tk):
     def __init__(self, master):
@@ -23,7 +25,6 @@ class EnergyResourceApp(tk.Tk):
 
         # Create the menu bar
         self.menu = MenuBar(master)
-
 
         # Create the left side frame
         self.left_frame = ttk.Frame(self.main_frame)
@@ -57,7 +58,6 @@ class EnergyResourceApp(tk.Tk):
         self.location_page = InputPage(self.master)
         self.location_page.create_location_section(self.left_frame)
         
-
         # Create the load demand section
         self.load_page = LoadDemandSection(self.master)
         self.load_page.create_load_demand_section(self.left_frame)
