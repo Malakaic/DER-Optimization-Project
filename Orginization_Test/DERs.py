@@ -11,13 +11,6 @@ class Der_menu_page (tk.Frame):
         super().__init__(parent)
         self.parent = parent
         
-        self.pv_data_dict = config.pv_data_dict
-        self.wind_data_dict = config.wind_data_dict
-        self.battery_data_dict = config.battery_data_dict
-        self.pv_counter = config.pv_counter
-        self.wind_counter = config.wind_counter
-        self.battery_counter = config.battery_counter
-        
         
     def create_der_section(self, frame):
 
@@ -42,9 +35,12 @@ class Der_menu_page (tk.Frame):
 
                 # Loop through each selected option and create a new frame for each
                 for idx, option in enumerate(selected):
+                    # Calculate row and column for 2x2 grid
+                    row, col = divmod(idx, 2)
+
                     # Create a new frame for each selected option
                     result_frame = ttk.LabelFrame(frame, text=option)
-                    result_frame.grid(row=2 + idx, column=0, sticky="nsew", padx=5, pady=5)
+                    result_frame.grid(row=row, column=1 + col, sticky="nsew", padx=5, pady=5)  # Shift to the right column
 
                     if option == "PV":
                         pv_frame = ttk.Frame(result_frame)  # A container for better layout
@@ -105,7 +101,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.pv_data_dict[config.pv_counter] = pv_data
-                                print(f"PV data saved with name '{pv_data[0]}'.")
+                                print(f"PV data saved:'{pv_data}'.")
                                 # Increment the counter for the next save
                                 config.pv_counter += 1
 
@@ -179,7 +175,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.wind_data_dict[config.wind_counter] = wind_data
-                                print(f"Wind data saved with name '{wind_data[0]}'.")
+                                print(f"Wind data saved: '{wind_data}'.")
                                 # Increment the counter for the next save
                                 config.wind_counter += 1
                                 
@@ -261,7 +257,7 @@ class Der_menu_page (tk.Frame):
                             else:
                                 #Save Current Data
                                 config.battery_data_dict[config.battery_counter] = battery_data
-                                print(f"Battery data saved with name '{battery_data[0]}'.")
+                                print(f"Battery data saved: '{battery_data}'.")
                                 # Increment the counter for the next save
                                 config.battery_counter += 1
 
