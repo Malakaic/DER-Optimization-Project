@@ -21,7 +21,7 @@ class Der_menu_page (tk.Frame):
             checkbox_states = {}
 
             # Define the options for the checkboxes
-            options = ["PV", "Wind", "Battery", "Grids"]
+            options = ["PV", "Wind", "Battery", "Inverter"]
 
             # Function to display the selected options
             def show_selected():
@@ -52,33 +52,50 @@ class Der_menu_page (tk.Frame):
                         pv_name_entry = tk.Entry(pv_frame)
                         pv_name_entry.grid(row=0, column=1, sticky="e", padx=5)
 
+                        # Text box for Size
+                        size_label = tk.Label(pv_frame, text="Size (kW-DC):", anchor="w")
+                        size_label.grid(row=1, column=0, sticky="w", padx=5)
+                        size_entry = tk.Entry(pv_frame)
+                        size_entry.grid(row=1, column=1, sticky="e", padx=5)
+
                         # Text box for System capital cost
-                        cost_label = tk.Label(pv_frame, text="System capital cost ($/kW-DC):", anchor="w")
-                        cost_label.grid(row=1, column=0, sticky="w", padx=5)
+                        cost_label = tk.Label(pv_frame, text="Cost ($/kW-DC):", anchor="w")
+                        cost_label.grid(row=2, column=0, sticky="w", padx=5)
                         cost_entry = tk.Entry(pv_frame)
-                        cost_entry.grid(row=1, column=1, sticky="e", padx=5)
+                        cost_entry.grid(row=2, column=1, sticky="e", padx=5)
 
-                        # Text box for Minimum new PV size
-                        min_pv_label = tk.Label(pv_frame, text="Minimum new PV size (kW-DC):", anchor="w")
-                        min_pv_label.grid(row=2, column=0, sticky="w", padx=5)
-                        min_pv_entry = tk.Entry(pv_frame)
-                        min_pv_entry.grid(row=2, column=1, sticky="e", padx=5)
+                        # Text box for Lifespan
+                        lifespan_label = tk.Label(pv_frame, text="Lifespan (years):", anchor="w")
+                        lifespan_label.grid(row=3, column=0, sticky="w", padx=5)
+                        lifespan_entry = tk.Entry(pv_frame)
+                        lifespan_entry.grid(row=3, column=1, sticky="e", padx=5)
 
-                        # Text box for Maximum new PV size
-                        max_pv_label = tk.Label(pv_frame, text="Maximum new PV size (kW-DC):", anchor="w")
-                        max_pv_label.grid(row=3, column=0, sticky="w", padx=5)
-                        max_pv_entry = tk.Entry(pv_frame)
-                        max_pv_entry.grid(row=3, column=1, sticky="e", padx=5)
+                        # Dropdown for Module type
+                        module_type_label = tk.Label(pv_frame, text="Module Type:", anchor="w")
+                        module_type_label.grid(row=4, column=0, sticky="w", padx=5)
+                        
+                        module_types = ["Monocrystalline", "Polycrystalline", "Thin-Film"]
+                        module_type_var = tk.StringVar()
+                        module_type_dropdown = ttk.Combobox(pv_frame, textvariable=module_type_var, values=module_types, state="readonly")
+                        module_type_dropdown.grid(row=4, column=1, sticky="e", padx=5)
+                        module_type_dropdown.current(0)  # Set default selection
+
+                        # Text box for Efficiency
+                        efficiency_label = tk.Label(pv_frame, text="Efficiency (%):", anchor="w")
+                        efficiency_label.grid(row=5, column=0, sticky="w", padx=5)
+                        efficiency_entry = tk.Entry(pv_frame)
+                        efficiency_entry.grid(row=5, column=1, sticky="e", padx=5)
 
                         # Save Button for PV
                         def save_pv_data():
-
                             # Create a list with the data for the current PV
                             pv_data = [
                                 pv_name_entry.get(),  # Name
-                                cost_entry.get(),     # System capital cost
-                                min_pv_entry.get(),   # Min PV size
-                                max_pv_entry.get()    # Max PV size
+                                size_entry.get(),     # Size
+                                cost_entry.get(),     # Cost
+                                lifespan_entry.get(), # Lifespan
+                                module_type_var.get(),# Module Type
+                                efficiency_entry.get()# Efficiency
                             ]
 
                             # Check if a save with the same name already exists
@@ -89,20 +106,16 @@ class Der_menu_page (tk.Frame):
 
                             if existing_key is not None:
                                 # Overwrite the existing save
-                                # Show a message box indicating the overwrite
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{pv_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
-                                    # Overwrite the existing save
                                     config.pv_data_dict[existing_key] = pv_data
                                     print(f"PV data with name '{pv_data[0]}' overwritten.")
                                 else:
-                                    # Prompt user to change the name
                                     messagebox.showinfo("Change Name", "Please change the name of the PV before saving.")
                             else:
-                                #Save Current Data
+                                # Save Current Data
                                 config.pv_data_dict[config.pv_counter] = pv_data
-                                print(f"PV data saved:'{pv_data}'.")
-                                # Increment the counter for the next save
+                                print(f"PV data saved: '{pv_data}'.")
                                 config.pv_counter += 1
 
                         pv_save_button = tk.Button(pv_frame, text="Save", command=save_pv_data)
@@ -119,40 +132,46 @@ class Der_menu_page (tk.Frame):
                         wind_name_entry = tk.Entry(wind_frame)
                         wind_name_entry.grid(row=0, column=1, sticky="e", padx=5)
 
-                        # "Size class" label and entry
-                        size_class_label = tk.Label(wind_frame, text="Size class:", anchor="w")
-                        size_class_label.grid(row=1, column=0, sticky="w", padx=5)
-                        size_class_entry = tk.Entry(wind_frame)
-                        size_class_entry.grid(row=1, column=1, sticky="e", padx=5)
+                        # "Size" label and entry
+                        size_label = tk.Label(wind_frame, text="Size (kW AC):", anchor="w")
+                        size_label.grid(row=1, column=0, sticky="w", padx=5)
+                        size_entry = tk.Entry(wind_frame)
+                        size_entry.grid(row=1, column=1, sticky="e", padx=5)
 
-                        # "System capital cost ($/kW)" label and entry
-                        wind_cost_label = tk.Label(wind_frame, text="System capital cost ($/kW):", anchor="w")
-                        wind_cost_label.grid(row=2, column=0, sticky="w", padx=5)
-                        wind_cost_entry = tk.Entry(wind_frame)
-                        wind_cost_entry.grid(row=2, column=1, sticky="e", padx=5)
+                        # "Hub Height" label and entry
+                        hub_height_label = tk.Label(wind_frame, text="Hub Height (meters):", anchor="w")
+                        hub_height_label.grid(row=2, column=0, sticky="w", padx=5)
+                        hub_height_entry = tk.Entry(wind_frame)
+                        hub_height_entry.grid(row=2, column=1, sticky="e", padx=5)
 
-                        # "Minimum size desired (kW AC)" label and entry
-                        min_wind_size_label = tk.Label(wind_frame, text="Minimum size desired (kW AC):", anchor="w")
-                        min_wind_size_label.grid(row=3, column=0, sticky="w", padx=5)
-                        min_wind_size_entry = tk.Entry(wind_frame)
-                        min_wind_size_entry.grid(row=3, column=1, sticky="e", padx=5)
+                        # "Lifespan" label and entry
+                        lifespan_label = tk.Label(wind_frame, text="Lifespan (years):", anchor="w")
+                        lifespan_label.grid(row=3, column=0, sticky="w", padx=5)
+                        lifespan_entry = tk.Entry(wind_frame)
+                        lifespan_entry.grid(row=3, column=1, sticky="e", padx=5)
 
-                        # "Maximum size desired (kW AC)" label and entry
-                        max_wind_size_label = tk.Label(wind_frame, text="Maximum size desired (kW AC):", anchor="w")
-                        max_wind_size_label.grid(row=4, column=0, sticky="w", padx=5)
-                        max_wind_size_entry = tk.Entry(wind_frame)
-                        max_wind_size_entry.grid(row=4, column=1, sticky="e", padx=5)
+                        # "Rotor Diameter" label and entry
+                        rotor_diameter_label = tk.Label(wind_frame, text="Rotor Diameter (meters):", anchor="w")
+                        rotor_diameter_label.grid(row=4, column=0, sticky="w", padx=5)
+                        rotor_diameter_entry = tk.Entry(wind_frame)
+                        rotor_diameter_entry.grid(row=4, column=1, sticky="e", padx=5)
+
+                        # "Efficiency" label and entry
+                        efficiency_label = tk.Label(wind_frame, text="Efficiency (%):", anchor="w")
+                        efficiency_label.grid(row=5, column=0, sticky="w", padx=5)
+                        efficiency_entry = tk.Entry(wind_frame)
+                        efficiency_entry.grid(row=5, column=1, sticky="e", padx=5)
 
                         # Save Button for Wind
                         def save_wind_data():
-
                             # Create a list with the data for the current turbine
                             wind_data = [
                                 wind_name_entry.get(),   # Name
-                                size_class_entry.get(),  # Size class entry
-                                wind_cost_entry.get(),   # Wind cost entry
-                                min_wind_size_entry.get(),  # Min wind size
-                                max_wind_size_entry.get()   # Max wind size
+                                size_entry.get(),        # Size
+                                hub_height_entry.get(),  # Hub Height
+                                lifespan_entry.get(),    # Lifespan
+                                rotor_diameter_entry.get(),  # Rotor Diameter
+                                efficiency_entry.get()   # Efficiency
                             ]
 
                             # Check if a save with the same name already exists
@@ -163,24 +182,20 @@ class Der_menu_page (tk.Frame):
 
                             if existing_key is not None:
                                 # Overwrite the existing save
-                                # Show a message box indicating the overwrite
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{wind_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
-                                    # Overwrite the existing save
                                     config.wind_data_dict[existing_key] = wind_data
                                     print(f"Wind data with name '{wind_data[0]}' overwritten.")
                                 else:
-                                    # Prompt user to change the name
                                     messagebox.showinfo("Change Name", "Please change the name of the wind turbine before saving.")
                             else:
-                                #Save Current Data
+                                # Save Current Data
                                 config.wind_data_dict[config.wind_counter] = wind_data
                                 print(f"Wind data saved: '{wind_data}'.")
-                                # Increment the counter for the next save
                                 config.wind_counter += 1
-                                
+
                         wind_save_button = tk.Button(wind_frame, text="Save", command=save_wind_data)
-                        wind_save_button.grid(row=5, column=0, columnspan=2, pady=10)
+                        wind_save_button.grid(row=6, column=0, columnspan=2, pady=10)
 
                     if option == "Battery":
                         # A container for the layout of all Battery-specific inputs
