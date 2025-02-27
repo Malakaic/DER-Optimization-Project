@@ -45,7 +45,7 @@ class EnergyResourceApp(tk.Tk):
 
         # Create the weighted objectives section
         self.objective_page = Objective_Menu(self.master)
-        self.objective_page.create_weighted_objectives_section(self.right_frame)        #self.create_weighted_objectives_section(self.right_frame)
+        self.objective_page.create_weighted_objectives_section(self.right_frame)
 
         #Create the DER section
         self.der_page = Der_menu_page(self.master)
