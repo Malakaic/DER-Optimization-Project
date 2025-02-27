@@ -5,15 +5,17 @@ from tkinter import filedialog, messagebox, ttk
 import requests
 import Wind_csv_save
 import Solar_PV_csv_save
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 #from Inputs import InputPage
 
 # Example usage
 configurations = [
-    {'solar': 5, 'wind': 10, 'battery': 20, 'inverter': 5},
-    {'solar': 8, 'wind': 12, 'battery': 25, 'inverter': 7},
-    {'solar': 10, 'wind': 15, 'battery': 30, 'inverter': 10},
-    {'solar': 12, 'wind': 18, 'battery': 35, 'inverter': 12}]
-
+    {'solar': 5, 'solar_panels': 20, 'wind': 10, 'wind_turbines': 4, 'battery': 20, 'battery_units': 10, 'inverter': 5, 'inverters': 1, 'price': 10000},
+    {'solar': 8, 'solar_panels': 32, 'wind': 12, 'wind_turbines': 5, 'battery': 25, 'battery_units': 12, 'inverter': 7, 'inverters': 1, 'price': 15000},
+    {'solar': 10, 'solar_panels': 40, 'wind': 15, 'wind_turbines': 6, 'battery': 30, 'battery_units': 15, 'inverter': 10, 'inverters': 2, 'price': 20000},
+    {'solar': 12, 'solar_panels': 48, 'wind': 18, 'wind_turbines': 7, 'battery': 35, 'battery_units': 18, 'inverter': 12, 'inverters': 2, 'price': 25000}
+]
 
 class Calculate_Button(tk.Frame):
     def __init__(self, parent,location_page):
@@ -120,12 +122,12 @@ class Calculate_Button(tk.Frame):
             config_frame.pack(fill=tk.BOTH, expand=True, pady=10)
 
             tk.Label(config_frame, text=f"Configuration {i}", font=('Helvetica', 14, 'bold')).pack(anchor='w')
-
-            tk.Label(config_frame, text=f"Solar: {config['solar']} kW").pack(anchor='w')
-            tk.Label(config_frame, text=f"Wind: {config['wind']} kW").pack(anchor='w')
-            tk.Label(config_frame, text=f"Battery: {config['battery']} kWh").pack(anchor='w')
-            tk.Label(config_frame, text=f"Inverter: {config['inverter']} kW").pack(anchor='w')
-
+       
+            tk.Label(config_frame, text=f"Solar: {config['solar']} kW ({config['solar_panels']} panels)").pack(anchor='w')
+            tk.Label(config_frame, text=f"Wind: {config['wind']} kW ({config['wind_turbines']} turbines)").pack(anchor='w')
+            tk.Label(config_frame, text=f"Battery: {config['battery']} kWh ({config['battery_units']} units)").pack(anchor='w')
+            tk.Label(config_frame, text=f"Inverter: {config['inverter']} kW ({config['inverters']} units)").pack(anchor='w')
+            tk.Label(config_frame, text=f"Price: ${config['price']}").pack(anchor='w')
 
           
 
