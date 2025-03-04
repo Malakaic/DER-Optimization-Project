@@ -108,14 +108,13 @@ class Calculate_Button(tk.Frame):
         results_window = tk.Toplevel(self.master)
         results_window.title("Calculation Results")
 
+        # Create main frame
         main_frame = ttk.Frame(results_window)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
+        # Left section (Configuration details)
         left_frame = ttk.Frame(main_frame)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        right_frame = ttk.Frame(main_frame)
-        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         canvas = tk.Canvas(left_frame)
         scrollbar = ttk.Scrollbar(left_frame, orient="vertical", command=canvas.yview)
@@ -123,9 +122,7 @@ class Calculate_Button(tk.Frame):
 
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
 
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
@@ -133,8 +130,12 @@ class Calculate_Button(tk.Frame):
 
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
-        
 
+        # Right section (Charts)
+        right_frame = ttk.Frame(main_frame)
+        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Title for the results section
         tk.Label(scrollable_frame, text="Calculation Results", font=('Helvetica', 16)).pack(pady=10)
 
         total_energies = []
@@ -145,14 +146,19 @@ class Calculate_Button(tk.Frame):
         battery_units = []
         inverters = []
         colors = ['blue', 'green', 'red', 'purple', 'orange', 'cyan']
+        component_colors = {
+                            "Solar Panels": "#FFD700",  # Yellow
+                            "Wind Turbines": "#E3E3E1",  # Pink
+                            "Battery Units": "#FA8D7D",  # Red
+                            "Inverters": "#DFFA7D"  # Purple
+                            }
 
-        # Display configurations
+        # Display configurations (LEFT SECTION)
         for i, config in enumerate(configurations, start=1):
             config_frame = ttk.Frame(scrollable_frame)
             config_frame.pack(fill=tk.BOTH, expand=True, pady=10)
 
             tk.Label(config_frame, text=f"Configuration {i}", font=('Helvetica', 14, 'bold')).pack(anchor='w')
-    
             tk.Label(config_frame, text=f"Solar: {config['solar']} kW ({config['solar_panels']} panels)").pack(anchor='w')
             tk.Label(config_frame, text=f"Wind: {config['wind']} kW ({config['wind_turbines']} turbines)").pack(anchor='w')
             tk.Label(config_frame, text=f"Battery: {config['battery']} kWh ({config['battery_units']} units)").pack(anchor='w')
@@ -168,53 +174,51 @@ class Calculate_Button(tk.Frame):
             wind_turbines.append(config['wind_turbines'])
             battery_units.append(config['battery_units'])
             inverters.append(config['inverters'])
-            # Your existing code...
 
-            # Create canvas and scrollbar for the right_frame (graph section)
-            right_canvas = tk.Canvas(right_frame)
-            right_scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=right_canvas.yview)
-            right_scrollable_frame = ttk.Frame(right_canvas)
+        # Create a single figure with 2x2 subplots (RIGHT SECTION)
+        fig, ax = plt.subplots(2, 2, figsize=(7, 5))
+        
+        # Subplot 1: Total Energy per Configuration
+        ax[0, 0].bar(labels, total_energies, color=colors[:len(labels)])
+        ax[0, 0].set_ylabel("Total Energy (kW+kWh)")
+        ax[0, 0].set_title("Total Energy per Configuration")
 
-            right_scrollable_frame.bind(
-                "<Configure>",
-                lambda e: right_canvas.configure(
-                    scrollregion=right_canvas.bbox("all")
-                )
-            )
+        # Subplot 2: Total Cost per Configuration
+        ax[0, 1].bar(labels, total_prices, color=colors[:len(labels)])
+        ax[0, 1].set_ylabel("Total Cost ($)")
+        ax[0, 1].set_title("Total Cost per Configuration")
 
-            right_canvas.create_window((0, 0), window=right_scrollable_frame, anchor="nw")
-            right_canvas.configure(yscrollcommand=right_scrollbar.set)
+        # Subplot 3: Component Count per Configuration
+# Subplot 3: Component Count per Configuration
+        width = 0.2
+        x = range(len(labels))
 
-            right_canvas.pack(side="left", fill="both", expand=True)
-            right_scrollbar.pack(side="right", fill="y")
+        ax[1, 0].bar([i - width*1.5 for i in x], solar_panels, width=width, 
+                    label='Solar Panels', color=component_colors["Solar Panels"])
+        ax[1, 0].bar([i - width/2 for i in x], wind_turbines, width=width, 
+                    label='Wind Turbines', color=component_colors["Wind Turbines"])
+        ax[1, 0].bar([i + width/2 for i in x], battery_units, width=width, 
+                    label='Battery Units', color=component_colors["Battery Units"])
+        ax[1, 0].bar([i + width*1.5 for i in x], inverters, width=width, 
+                    label='Inverters', color=component_colors["Inverters"])
 
-            # Your existing code to create bar charts...
-            fig, ax = plt.subplots(3, 1, figsize=(5, 12))
+        ax[1, 0].set_xticks(x)
+        ax[1, 0].set_xticklabels(labels)
+        ax[1, 0].set_ylabel("Component Count")
+        ax[1, 0].set_title("Component Count per Configuration")
+        ax[1, 0].legend()
 
-            ax[0].bar(labels, total_energies, color=colors[:len(labels)])
-            ax[0].set_ylabel("Total Energy (kW+kWh)")
-            ax[0].set_title("Total Energy per Configuration")
+        # Subplot 4: Solar vs. Wind Power Comparison
+        ax[1, 1].bar(labels, [config['solar'] for config in configurations], label="Solar Power", color='gold')
+        ax[1, 1].bar(labels, [config['wind'] for config in configurations], label="Wind Power", color='skyblue', alpha=0.7)
+        ax[1, 1].set_ylabel("Power (kW)")
+        ax[1, 1].set_title("Solar vs. Wind Power")
+        ax[1, 1].legend()
 
-            ax[1].bar(labels, total_prices, color=colors[:len(labels)])
-            ax[1].set_ylabel("Total Cost ($)")
-            ax[1].set_title("Total Cost per Configuration")
+        fig.tight_layout()
 
-            width = 0.2
-            x = range(len(labels))
-            ax[2].bar([i - width*1.5 for i in x], solar_panels, width=width, label='Solar Panels', color=colors[:len(labels)])
-            ax[2].bar([i - width/2 for i in x], wind_turbines, width=width, label='Wind Turbines', color=colors[:len(labels)])
-            ax[2].bar([i + width/2 for i in x], battery_units, width=width, label='Battery Units', color=colors[:len(labels)])
-            ax[2].bar([i + width*1.5 for i in x], inverters, width=width, label='Inverters', color=colors[:len(labels)])
-
-            ax[2].set_xticks(x)
-            ax[2].set_xticklabels(labels)
-            ax[2].set_ylabel("Component Count")
-            ax[2].set_title("Component Count per Configuration")
-            ax[2].legend()
-
-            fig.tight_layout()
-
-            chart_canvas = FigureCanvasTkAgg(fig, master=right_scrollable_frame)
-            chart_widget = chart_canvas.get_tk_widget()
-            chart_widget.pack(expand=True)
-            chart_canvas.draw()
+        # Create the chart canvas and add it to the RIGHT SECTION
+        chart_canvas = FigureCanvasTkAgg(fig, master=right_frame)
+        chart_widget = chart_canvas.get_tk_widget()
+        chart_widget.pack(expand=True, fill="both")
+        chart_canvas.draw()
