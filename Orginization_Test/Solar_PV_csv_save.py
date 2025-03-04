@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import numpy as np
 import json
+import config
 
 cache = {}
 
@@ -20,32 +21,39 @@ def solar_function(self, latitude, longitude):
     api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"
     lat = latitude
     lon = longitude
-    system_capacity = 10  # System capacity in kW - Required
-    azimuth = 180  # Azimuth angle in degrees - Required
-    tilt = 20  # Tilt angle in degrees - Required
-    losses = 10  # System losses as a percentage - Required
-    array_type = 1  # Fixed array type - Required (0 = fixed - open rack, 1 = fixed - roof mount, 2 = 1-axis, 3 = 1-axis backtracking, 4 = 2-axis )
-    module_type = 0  # Module type - Required (0 = standard, 1 = premium, 2 = thin film)
-    dataset = "nsrdb"  # Dataset to use - TMY data
+    for i in config.pv_data_dict:
+        system_capacity = config.pv_data_dict[i][1]  # System capacity in kW - Required
+        azimuth = 180  # Azimuth angle in degrees - Required
+        tilt = 20  # Tilt angle in degrees - Required
+        losses = 10  # System losses as a percentage - Required
+        array_type = 1  # Fixed array type - Required (0 = fixed - open rack, 1 = fixed - roof mount, 2 = 1-axis, 3 = 1-axis backtracking, 4 = 2-axis )
+        if config.pv_data_dict[i][4] == "Monocrystalline":
+            config.pv_data_dict[i][4] = 0
+        elif config.pv_data_dict[i][4] == "Polycrystalline":
+            config.pv_data_dict[i][4] = 1
+        elif config.pv_data_dict[i][4] == "Thin-Film":
+            config.pv_data_dict[i][4] = 2
+        module_type = config.pv_data_dict[i][4]  # Module type - Required (0 = Mono, 1 = Poly, 2 = thin film)
+        dataset = "nsrdb"  # Dataset to use - TMY data
 
 
-    # Set the folder path for "Environmental Data"
-    folder_name = "Environmental Data V4"
-    project_dir = os.getcwd()
-    folder_path = os.path.join(project_dir, folder_name)
-    os.makedirs(folder_path, exist_ok=True)
+        # Set the folder path for "Environmental Data"
+        folder_name = "Environmental Data V4"
+        project_dir = os.getcwd()
+        folder_path = os.path.join(project_dir, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
 
-    # Define file paths
-    solar_data_file = os.path.join(folder_path, "solar_data_saved.csv")
-    #output_file = os.path.join(folder_path, "solar_power_output.csv")
+        # Define file paths
+        solar_data_file = os.path.join(folder_path, "solar_data_saved.csv")
+        #output_file = os.path.join(folder_path, "solar_power_output.csv")
 
-    # Download the CSV data
-    if not os.path.exists(solar_data_file):
-        download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dataset, solar_data_file)
+        # Download the CSV data
+        if not os.path.exists(solar_data_file):
+            download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dataset, solar_data_file)
 
 
-    # Calculate solar power from CSV
-    #calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
+        # Calculate solar power from CSV
+        #calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
 
 def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type, dataset, solar_data_file):
     """
