@@ -191,7 +191,6 @@ class Calculate_Button(tk.Frame):
         ax[0, 1].set_title("Total Cost per Configuration")
 
         # Subplot 3: Component Count per Configuration
-# Subplot 3: Component Count per Configuration
         width = 0.2
         x = range(len(labels))
 
