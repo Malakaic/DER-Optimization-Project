@@ -33,6 +33,19 @@ wind_df = pd.read_csv(r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Envir
 wind_df["Original_Wind_Power"] = wind_df["Wind_Power"] / 1500  # Convert to kW
 wind_df["Wind_Power"] = (wind_df["Wind_Power"] / 1500) * PowerTurbine[0]  # Adjust for 1500 kW turbine size
 
+
+# Convert month names to numbers if necessary
+month_map = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+             "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
+if solar_df["Month"].dtype == object:
+    solar_df["Month"] = solar_df["Month"].map(month_map)
+if wind_df["Month"].dtype == object:
+    wind_df["Month"] = wind_df["Month"].map(month_map)
+
+# Ensure consistent data types
+solar_df[["Month", "Day", "Hour"]] = solar_df[["Month", "Day", "Hour"]].astype(int)
+wind_df[["Month", "Day", "Hour"]] = wind_df[["Month", "Day", "Hour"]].astype(int)
+
 # Merge data
 power_data = pd.merge(solar_df, wind_df, on=["Month", "Day", "Hour"], how="inner")
 

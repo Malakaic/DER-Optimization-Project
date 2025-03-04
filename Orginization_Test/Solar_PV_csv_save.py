@@ -44,7 +44,8 @@ def solar_function(self, latitude, longitude):
         os.makedirs(folder_path, exist_ok=True)
 
         # Define file paths
-        solar_data_file = os.path.join(folder_path, "solar_data_saved.csv")
+        pv_name = config.pv_data_dict[i][0]
+        solar_data_file = os.path.join(folder_path, f"{pv_name}_solar_data_saved.csv")
         #output_file = os.path.join(folder_path, "solar_power_output.csv")
 
         # Download the CSV data

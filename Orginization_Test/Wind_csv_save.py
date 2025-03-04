@@ -2,6 +2,7 @@ import os
 import requests
 import pandas as pd
 import numpy as np
+import config
 
 # Cache dictionary to hold previously fetched results
 cache = {}
@@ -22,35 +23,39 @@ def wind_function_main(self, latitude, longitude):
     # Definitions for API key
     lon = longitude
     lat = latitude
-    wind_data_type = "windspeed_100m"
-    year = 2023
-    user_email = "malakaicrane@gmail.com"
-    api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"
+    for i in config.wind_data_dict:
+        
+        wind_data_type = "windspeed_100m"
+        year = 2023
+        user_email = "malakaicrane@gmail.com"
+        api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"
 
-    turbine_capacity = 1500  # kW
-    turbine_efficiency = 35  # percentage
-    rotor_diameter = 77  # meters
+        turbine_capacity = config.wind_data_dict[i][1]  # kW
+        rotor_diameter = config.wind_data_dict[i][4]  # meters
+        turbine_efficiency = config.wind_data_dict[i][5]  # percentage
+        
 
-    # Set the folder path for "Environmental Data"
-    folder_name = "Environmental Data V4"
-    project_dir = os.getcwd()
-    folder_path = os.path.join(project_dir, folder_name)
-    os.makedirs(folder_path, exist_ok=True)
+        # Set the folder path for "Environmental Data"
+        folder_name = "Environmental Data V4"
+        project_dir = os.getcwd()
+        folder_path = os.path.join(project_dir, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
 
-    # Define file paths
-    wind_speed_file = os.path.join(folder_path, "wind_data_main_GUI.csv")
-    output_file = os.path.join(folder_path, "wind_power_output_main_GUI.csv")
+        # Define file paths
+        turbine_name = config.wind_data_dict[i][0]
+        wind_speed_file = os.path.join(folder_path, f"{turbine_name}wind_data_main_GUI.csv")
+        output_file = os.path.join(folder_path, "wind_power_output_main_GUI.csv")
 
-    # Download the CSV data if it doesn't already exist
-    if not os.path.exists(wind_speed_file):
-        download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
+        # Download the CSV data if it doesn't already exist
+        if not os.path.exists(wind_speed_file):
+            download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
 
-    # Calculate wind power from CSV
-    total_power = calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter)
-    
-    # Store result in cache
-    cache[cache_key] = total_power
-    return total_power
+        # Calculate wind power from CSV
+        total_power = calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter)
+        
+        # Store result in cache
+        cache[cache_key] = total_power
+        return total_power
 
 
 def download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file):

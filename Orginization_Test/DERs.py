@@ -117,9 +117,10 @@ class Der_menu_page (tk.Frame):
                                 config.pv_data_dict[config.pv_counter] = pv_data
                                 print(f"PV data saved: '{pv_data}'.")
                                 config.pv_counter += 1
-
+                        
                         pv_save_button = tk.Button(pv_frame, text="Save", command=save_pv_data)
                         pv_save_button.grid(row=6, column=0, columnspan=2, pady=10)
+                        
 
                     if option == "Wind":
                         # A container for the layout of all Wind-specific inputs

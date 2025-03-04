@@ -7,6 +7,7 @@ import Wind_csv_save
 import Solar_PV_csv_save
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import config
 #from Inputs import InputPage
 
 # Example usage
@@ -75,7 +76,8 @@ class Calculate_Button(tk.Frame):
             return
        # global latitude, longitude
         latitude, longitude = self.get_coordinates(city, state, country)
-
+        #pv_solar_data = config.pv_data_dict
+        
         if latitude is not None and longitude is not None:
             try:
                 print ("pulling wind data")
