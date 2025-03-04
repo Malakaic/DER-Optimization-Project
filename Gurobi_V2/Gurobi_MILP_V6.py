@@ -42,6 +42,10 @@ max_pv = 8  # Maximum number of PV systems
 # Lifespan in hours (24 hours * 365 days)
 lifespan_hours = 24 * 365  # Total lifespan in hours
 
+# Weights for objectives
+weight_cost = 0.25  # Weight for cost minimization
+weight_renewable = 0.75  # Weight for renewable energy maximization
+
 # Initialize results list
 results = []
 
@@ -59,29 +63,32 @@ model.addConstr(total_installation_cost ==
     sum((costTurbine[i] * PowerTurbine[i] * turbine[i] * lifespan_hours) for i in range(3)) +
     sum((costPV[i] * PowerPV[i] * PV[i] * lifespan_hours) for i in range(3)), "InstallationCost")
 
-# Objective Function: Minimize total installation cost and maximize renewable energy
-model.setObjective(sum(costTurbine[i] * turbine[i] for i in range(3)) + sum(costPV[i] * PV[i] for i in range(3)), GRB.MINIMIZE)
-
-# Constraints
+# Iterate over each hour and compute contributions
 for hour in range(len(power_data)):
+    available_solar_power = solar_df.iloc[hour]['Solar_Power']
+    available_wind_power = wind_df.iloc[hour]['Wind_Power']
+    
+    # Ensure power does not exceed available generation
+    total_wind_power = sum(min(PowerTurbine[i], available_wind_power) * turbine[i] for i in range(3))
+    total_solar_power = sum(min(PowerPV[i], available_solar_power) * PV[i] for i in range(3))
+
+    # Total available renewable power for this hour
+    renewable_power = total_wind_power + total_solar_power
+
+    # Debugging output
+    print(f"Hour {hour}: Load Demand = {load_demand}, Available Solar Power = {available_solar_power}, Available Wind Power = {available_wind_power}, Renewable Power = {renewable_power}")
+
     load = load_demand
+    model.addConstr(grid_energy[hour] >= load - renewable_power, "DemandConstraint_{}".format(hour))
     
-    # Define renewable power available from data
-    available_solar_power = solar_df["Solar_Power"].iloc[hour]
-    available_wind_power = wind_df["Wind_Power"].iloc[hour]
+    # Relax renewable constraint temporarily for debugging
+    #model.addConstr(renewable_power >= 0.5 * load, "RenewableFractionConstraint_{}".format(hour))
 
-    # Total renewable power generated from turbines and PV
-    total_renewable_power = sum(PowerTurbine[i] * turbine[i] for i in range(3)) + sum(PowerPV[i] * PV[i] for i in range(3))
-    
-    # Demand constraint ensuring load is met
-    model.addConstr(grid_energy[hour] >= load - total_renewable_power, "DemandConstraint_{}".format(hour))
-    
-    # Adjust renewable generation based on availability
-    model.addConstr(sum(PowerPV[i] * PV[i] for i in range(3)) <= available_solar_power, "SolarPowerAvailabilityConstraint_{}".format(hour))
-    model.addConstr(sum(PowerTurbine[i] * turbine[i] for i in range(3)) <= available_wind_power, "WindPowerAvailabilityConstraint_{}".format(hour))
+# Objective Function: Minimize total installation cost and maximize renewable energy
+model.setObjective(weight_cost * total_installation_cost - weight_renewable * (total_wind_power + total_solar_power), GRB.MINIMIZE)
 
-    # Constraint to ensure at least 75% of demand comes from renewables if possible
-    model.addConstr(total_renewable_power >= 0.75 * load, "RenewableFractionConstraint_{}".format(hour))
+# Set NumericFocus for better numerical stability
+model.setParam('NumericFocus', 2)
 
 # Optimize the model
 model.optimize()
