@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import Load_Inputs
 import Inputs
+import config
 
 
 class MenuBar(tk.Frame):
@@ -12,17 +13,72 @@ class MenuBar(tk.Frame):
         self.create_menu()
 
     def create_menu(self):
-            """Creates the menu bar for file operations."""
-            menu_bar = tk.Menu(self.master)
+        """Creates the menu bar for file operations."""
+        menu_bar = tk.Menu(self.master)
 
-            # File menu
-            file_menu = tk.Menu(menu_bar, tearoff=0)
-            file_menu.add_command(label="Save as CSV", command=self.save_to_csv)
-            file_menu.add_command(label="Open CSV", command=self.open_csv)
-            file_menu.add_command(label="Clear All", command=self.clear_all)
-            menu_bar.add_cascade(label="File", menu=file_menu)
+        # File menu
+        file_menu = tk.Menu(menu_bar, tearoff=0)
+        file_menu.add_command(label="Save as CSV", command=self.save_to_csv)
+        file_menu.add_command(label="Open CSV", command=self.open_csv)
+        file_menu.add_command(label="Clear All", command=self.clear_all)
+        menu_bar.add_cascade(label="File", menu=file_menu)
 
-            self.master.config(menu=menu_bar)
+        # View menu
+        view_menu = tk.Menu(menu_bar, tearoff=0)
+        view_menu.add_command(label="Saved PVs", command=self.view_saved_pvs)
+        view_menu.add_command(label="Saved Turbines", command=self.view_saved_turbines)
+        view_menu.add_command(label="Saved Batteries", command=self.view_saved_batteries)
+        view_menu.add_command(label="Saved Inverters", command=self.view_saved_inverters)
+        menu_bar.add_cascade(label="View", menu=view_menu)
+
+        self.master.config(menu=menu_bar)
+
+    def view_saved_pvs(self):
+        """Handle View Saved PVs."""
+        pv_window = tk.Toplevel()
+        pv_window.title("Saved PVs")
+
+        labels = ["Name", "Size (kW-DC)", "Cost ($/kW-DC)", "Lifespan (years)", "Module Type", "Efficiency (%)"]
+        for i, label in enumerate(labels):
+            tk.Label(pv_window, text=label).grid(row=0, column=i)
+
+        # Assuming config.pv_data_dict is a dictionary where values are lists of PV attributes
+        for row_index, (key, row_data) in enumerate(config.pv_data_dict.items(), start=1):
+            for col_index, item in enumerate(row_data):
+                tk.Label(pv_window, text=item).grid(row=row_index, column=col_index)
+
+
+    def view_saved_turbines(self):
+        """Handle View Saved Turbines."""
+        turbine_window = tk.Toplevel()
+        turbine_window.title("Saved Turbines")
+
+        labels = ["Name", "Size (kW AC)", "Hub Height (meters)", "Lifespan (years)", "Rotor Diameter (meters)", "Efficiency (%)"]
+        for i, label in enumerate(labels):
+            tk.Label(turbine_window, text=label).grid(row=0, column=i)
+
+        # Assuming config.wind_data_dict is a dictionary where values are lists of turbine attributes
+        for row_index, (key, row_data) in enumerate(config.wind_data_dict.items(), start=1):
+            for col_index, item in enumerate(row_data):
+                tk.Label(turbine_window, text=item).grid(row=row_index, column=col_index)
+
+    def view_saved_batteries(self):
+        """Handle View Saved Batteries."""
+        battery_window = tk.Toplevel()
+        battery_window.title("Saved Batteries")
+
+        labels = ["Name", "Energy capacity cost ($/kWh)", "Power capacity cost ($/kW)", "Allow grid to charge battery", "Minimum energy capacity (kWh)", "Maximum energy capacity (kWh)"]
+        for i, label in enumerate(labels):
+            tk.Label(battery_window, text=label).grid(row=0, column=i)
+
+        # Assuming config.battery_data_dict is a dictionary where values are lists of battery attributes
+        for row_index, (key, row_data) in enumerate(config.battery_data_dict.items(), start=1):
+            for col_index, item in enumerate(row_data):
+                tk.Label(battery_window, text=item).grid(row=row_index, column=col_index)
+
+    def view_saved_inverters(self):
+        """Handle View Saved Inverters."""
+        messagebox.showinfo("Saved Inverters", "Saved Inverters selected")
 
     # Save to CSV file function
     def save_to_csv(self):
