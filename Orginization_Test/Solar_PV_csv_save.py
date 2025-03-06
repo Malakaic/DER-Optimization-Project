@@ -22,18 +22,18 @@ def solar_function(self, latitude, longitude):
     lat = latitude
     lon = longitude
     for i in config.pv_data_dict:
-        system_capacity = config.pv_data_dict[i][1]  # System capacity in kW - Required
+        system_capacity = int(config.pv_data_dict[i][1])  # System capacity in kW - Required
         azimuth = 180  # Azimuth angle in degrees - Required
         tilt = 20  # Tilt angle in degrees - Required
         losses = 10  # System losses as a percentage - Required
         array_type = 1  # Fixed array type - Required (0 = fixed - open rack, 1 = fixed - roof mount, 2 = 1-axis, 3 = 1-axis backtracking, 4 = 2-axis )
         if config.pv_data_dict[i][4] == "Monocrystalline":
-            config.pv_data_dict[i][4] = 0
+            int(config.pv_data_dict[i][4]) == 0
         elif config.pv_data_dict[i][4] == "Polycrystalline":
-            config.pv_data_dict[i][4] = 1
+            int(config.pv_data_dict[i][4]) == 1
         elif config.pv_data_dict[i][4] == "Thin-Film":
-            config.pv_data_dict[i][4] = 2
-        module_type = config.pv_data_dict[i][4]  # Module type - Required (0 = Mono, 1 = Poly, 2 = thin film)
+            int(config.pv_data_dict[i][4]) == 2
+        module_type = int(config.pv_data_dict[i][4])  # Module type - Required (0 = Mono, 1 = Poly, 2 = thin film)
         dataset = "nsrdb"  # Dataset to use - TMY data
 
 
@@ -85,7 +85,7 @@ def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses
         if response.status_code == 200:
             with open(solar_data_file, 'wb') as file:
                 file.write(response.content)
-            print(f"Data successfully downloaded and saved to {solar_data_file}")
+            print(f"PV Data successfully downloaded and saved to {solar_data_file}")
         else:
             print(f"Failed to download data. HTTP Status Code: {response.status_code}")
             print(f"Error Details: {response.text}")

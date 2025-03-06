@@ -96,8 +96,10 @@ def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capa
         if not wind_speed_column:
             raise ValueError("Wind speed column not found in the data.")
 
+        # Convert wind speed column to numeric
+        df['wind_speed'] = pd.to_numeric(df[wind_speed_column], errors='coerce')
+
         # Calculate power output only for valid entries
-        df['wind_speed'] = df[wind_speed_column]
         air_density = 1.225  # kg/m^3
         swept_area = np.pi * (rotor_diameter / 2) ** 2  # m^2
         
