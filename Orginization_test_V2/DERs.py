@@ -4,6 +4,8 @@ import tkinter as tk
 import requests
 from tkinter import filedialog, messagebox, ttk
 import config
+import Solar_PV_csv_save
+import Location_Input
 
 
 class Der_menu_page (tk.Frame):
@@ -86,18 +88,9 @@ class Der_menu_page (tk.Frame):
                         efficiency_entry = tk.Entry(pv_frame)
                         efficiency_entry.grid(row=5, column=1, sticky="e", padx=5)
 
-                        # Save Button for PV
+
                         def save_pv_data():
-                            """
-                            # Print the values of the entry fields for debugging
-                            print(f"Name: {pv_name_entry.get()}")
-                            print(f"Size: {size_entry.get()}")
-                            print(f"Cost: {cost_entry.get()}")
-                            print(f"Lifespan: {lifespan_entry.get()}")
-                            print(f"Module Type: {module_type_var.get()}")
-                            print(f"Efficiency: {efficiency_entry.get()}")
-                            """
-                            # Create a list with the data for the current PV
+                            # Gather data for the current PV configuration
                             pv_data = [
                                 pv_name_entry.get(),  # Name
                                 size_entry.get(),     # Size
@@ -106,7 +99,17 @@ class Der_menu_page (tk.Frame):
                                 module_type_var.get(),# Module Type
                                 efficiency_entry.get()# Efficiency
                             ]
-                        
+                            
+                            """
+                            # Validate input values (ensure all fields are filled)
+                            if not all(pv_data):
+                                messagebox.showwarning("Input Error", "Please fill in all fields.")
+                                return
+                            """
+                            
+                            # Append the current configuration to the global list in config
+                            config.pv_configurations.append(pv_data)
+
                             # Check if a save with the same name already exists
                             existing_key = None
                             for key, value in config.pv_data_dict.items():
@@ -118,16 +121,16 @@ class Der_menu_page (tk.Frame):
                                 overwrite = messagebox.askyesno("Overwrite Entry", f"An entry with the name '{pv_data[0]}' already exists. Do you want to overwrite it?")
                                 if overwrite:
                                     config.pv_data_dict[existing_key] = pv_data
-                                    #config.pv_data_dict[existing_key][4] = module_type_value  # Set the module type value
                                     print(f"PV data with name '{pv_data[0]}' overwritten.")
                                 else:
                                     messagebox.showinfo("Change Name", "Please change the name of the PV before saving.")
                             else:
                                 # Save Current Data
                                 config.pv_data_dict[config.pv_counter] = pv_data
-                                #config.pv_data_dict[config.pv_counter][4] = module_type_value  # Set the module type value
                                 print(f"PV data saved: {pv_data}")
                                 config.pv_counter += 1
+
+                       
                         pv_save_button = tk.Button(pv_frame, text="Save", command=save_pv_data)
                         pv_save_button.grid(row=6, column=0, columnspan=2, pady=10)
                         

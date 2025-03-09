@@ -7,17 +7,14 @@ import time
 
 #cache = {}
 
+
 def solar_function(self, latitude, longitude, pv_name_user, system_capacity_user, module_type_user):
     # API Parameter Definitions
-
-        # Check if latitude and longitude are valid
+    print("Solar Function Called")
+    # Check if latitude and longitude are valid
     if not (isinstance(latitude, (int, float)) and isinstance(longitude, (int, float))):
         raise ValueError("Latitude and longitude must be numeric.")
 
-    # Cache key
-    #cache_key = f"{latitude},{longitude}"
-
-    #address = "west lafayette, in"
     api_key = "YT5auN6kF3hMbh7c1bQeyKCZYssN2DH0sv3zmZpG"
     lat = latitude
     lon = longitude
@@ -42,25 +39,17 @@ def solar_function(self, latitude, longitude, pv_name_user, system_capacity_user
 
     dataset = "nsrdb"  # Dataset to use - TMY data
 
-
     # Set the folder path for "Environmental Data"
     folder_name = "Environmental Data V4"
     project_dir = os.getcwd()
     folder_path = os.path.join(project_dir, folder_name)
     os.makedirs(folder_path, exist_ok=True)
 
-        # Define file paths
-    
+    # Define file paths
     solar_data_file = os.path.join(folder_path, f"{pv_name}_solar_data_saved.csv")
-        #output_file = os.path.join(folder_path, "solar_power_output.csv")
 
-        # Download the CSV data
-    if not os.path.exists(solar_data_file):
-        download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type_value, dataset, solar_data_file, pv_name)
-
-
-        # Calculate solar power from CSV
-        #calculate_solar_power_with_columns(solar_data_file, output_file, panel_capacity, panel_efficiency, panel_area)
+    # Download the CSV data (always overwrite)
+    download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type_value, dataset, solar_data_file, pv_name)
 
 def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses, array_type, module_type_value, dataset, solar_data_file, pv_name):
     """
@@ -69,7 +58,7 @@ def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses
     print(f"Downloading solar data for PV: {pv_name}")
     api_url = f"https://developer.nrel.gov/api/pvwatts/v8.csv"
 
-        # API request parameters
+    # API request parameters
     params = {
         "api_key": api_key,
         "lat": lat,
@@ -83,10 +72,9 @@ def download_solar_csv(api_key, lat, lon, system_capacity, azimuth, tilt, losses
         "dataset": dataset,
         "timeframe": "hourly"  # Request hourly data
     }
-    
 
     try:
-        time.sleep(3)
+        time.sleep(2)
         response = requests.get(api_url, params=params)
         
         # Check if the response is successful

@@ -2,23 +2,17 @@ import os
 import requests
 import pandas as pd
 import numpy as np
-import config
+import time
+
 
 # Cache dictionary to hold previously fetched results
-cache = {}
+
 
 def wind_function_main(self, latitude, longitude, turbine_name_user, turbine_capacity_user, rotor_diameter_user, turbine_efficiency_user):
     # Check if latitude and longitude are valid
     if not (isinstance(latitude, (int, float)) and isinstance(longitude, (int, float))):
         raise ValueError("Latitude and longitude must be numeric.")
 
-    # Cache key
-    cache_key = f"{latitude},{longitude}"
-    
-    # If data is already cached, use it
-    if cache_key in cache:
-        print("Using cached data.")
-        return cache[cache_key]
 
     # Definitions for API key
     lon = longitude
@@ -41,18 +35,15 @@ def wind_function_main(self, latitude, longitude, turbine_name_user, turbine_cap
     os.makedirs(folder_path, exist_ok=True)
 
     # Define file paths
-    wind_speed_file = os.path.join(folder_path, f"{turbine_name}wind_data_main_GUI.csv")
-    output_file = os.path.join(folder_path, "wind_power_output_main_GUI.csv")
+    wind_speed_file = os.path.join(folder_path, f"{turbine_name}_wind_data_main_GUI.csv")
 
-    # Download the CSV data if it doesn't already exist
-    if not os.path.exists(wind_speed_file):
-        download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
+    # Download the CSV data (always overwrite)
+    download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_speed_file)
 
-    # Calculate wind power from CSV
-    total_power = calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter)
+    # Calculate wind power from CSV and add a column for power output
+    total_power = calculate_wind_power_with_columns(wind_speed_file, turbine_capacity, turbine_efficiency, rotor_diameter)
 
-    # Store result in cache
-    cache[cache_key] = total_power
+
     return total_power
 
 
@@ -63,6 +54,7 @@ def download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_
     api_url = f"https://developer.nrel.gov/api/wind-toolkit/v2/wind/wtk-bchrrr-v1-0-0-download.csv?wkt=POINT({lon} {lat})&attributes={wind_data_type}&names={year}&utc=false&leap_day=true&email={user_email}&api_key={api_key}"
     
     try:
+        time.sleep(2)
         response = requests.get(api_url)
         
         # Check if the response is successful
@@ -76,9 +68,9 @@ def download_wind_csv(lon, lat, wind_data_type, year, user_email, api_key, wind_
     except Exception as e:
         print(f"An error occurred while downloading wind data: {e}")
 
-def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capacity, turbine_efficiency, rotor_diameter):
+def calculate_wind_power_with_columns(wind_speed_file, turbine_capacity, turbine_efficiency, rotor_diameter):
     """
-    Reads wind speed data from a CSV file, calculates power output, and saves it to another CSV file with the required columns.
+    Reads wind speed data from a CSV file, calculates power output, and adds a column for power output.
     """
     try:
         # Read CSV, skipping irrelevant rows and limiting the amount of data read
@@ -107,11 +99,10 @@ def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capa
             turbine_capacity
         )
 
-        # Select and reorder columns for output
-        output_columns = required_columns + ['wind_speed', 'power_output']
-        df[output_columns].to_csv(output_file, index=False)
+        # Save the updated DataFrame back to the same CSV file
+        df.to_csv(wind_speed_file, index=False)
 
-        print(f"Detailed wind power output saved to: {output_file}")
+        print(f"Detailed wind power output saved to: {wind_speed_file}")
 
         # Calculate and print total power output
         total_power_kwh = df['power_output'].sum()
@@ -120,4 +111,3 @@ def calculate_wind_power_with_columns(wind_speed_file, output_file, turbine_capa
     
     except Exception as e:
         print(f"An error occurred while calculating wind power: {e}")
-

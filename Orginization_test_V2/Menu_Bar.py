@@ -2,7 +2,7 @@ import csv
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import Load_Inputs
-import Inputs
+import Location_Input
 import config
 
 

@@ -82,7 +82,7 @@ class Calculate_Button(tk.Frame):
                 print("pulling wind data")
                 for i in config.wind_data_dict:
                     print(f"Processing wind data for configuration {i}: {config.wind_data_dict[i]}")
-                    turbine_name_user = str(config.wind_data_dict[i][1])
+                    turbine_name_user = str(config.wind_data_dict[i][0])
                     turbine_capacity_user = int(config.wind_data_dict[i][1])
                     rotor_diameter_user = int(config.wind_data_dict[i][4])  # meters
                     turbine_efficiency_user = float(config.wind_data_dict[i][5])  # percentage
@@ -98,6 +98,7 @@ class Calculate_Button(tk.Frame):
                     )  
 
                 print("pulling solar data")
+                
                 
                 for i in config.pv_data_dict:
                     print(f"Processing solar data for configuration {i}: {config.pv_data_dict[i]}")
@@ -122,8 +123,7 @@ class Calculate_Button(tk.Frame):
                 self.open_results_window(f"Error: {e}")
         else:
             self.open_results_window("Error", "Could not retrieve coordinates.")
-
-
+    print("Calculations completed.")
 
 
     '''
