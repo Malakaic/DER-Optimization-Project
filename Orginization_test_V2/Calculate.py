@@ -65,8 +65,51 @@ class Calculate_Button(tk.Frame):
                 return None, None
         except requests.exceptions.RequestException as e:
             return None, None
-
+        
     def calculate(self):
+        """Perform calculations, print results, and open results window."""
+        # Prompt the user for the project name
+        self.prompt_project_name()
+
+    def prompt_project_name(self):
+        """Prompt the user for the project name."""
+        self.project_name_window = tk.Toplevel(self.parent)
+        self.project_name_window.title("Enter Project Name")
+
+        tk.Label(self.project_name_window, text="Project Name:").pack(pady=10)
+        self.project_name_entry = tk.Entry(self.project_name_window)
+        self.project_name_entry.pack(pady=10)
+
+        tk.Button(self.project_name_window, text="OK", command=self.save_project_name).pack(pady=10)
+
+        self.center_window(self.project_name_window)
+        
+    def center_window(self, window):
+        """Center the given window on the screen."""
+        window.update_idletasks()
+        width = window.winfo_width()
+        height = window.winfo_height()
+        x = (window.winfo_screenwidth() // 2) - (width // 2)
+        y = (window.winfo_screenheight() // 2) - (height // 2)
+        window.geometry(f'{width}x{height}+{x}+{y}')
+
+    def save_project_name(self):
+        """Save the project name and proceed with calculations."""
+        project_name = self.project_name_entry.get()
+        if not project_name:
+            config.project_name = "Default_Project"
+            messagebox.showwarning("Warning", "Project name is empty. Using default name.")
+
+        else:
+            config.project_name = project_name
+
+        # Close the project name window
+        self.project_name_window.destroy()
+
+        # Proceed with the calculations
+        self.perform_calculations()
+
+    def perform_calculations(self):
         """Perform calculations, print results, and open results window."""
 
         city, state, country = self.gather_input_data()
@@ -84,8 +127,8 @@ class Calculate_Button(tk.Frame):
                     print(f"Processing wind data for configuration {i}: {config.wind_data_dict[i]}")
                     turbine_name_user = str(config.wind_data_dict[i][0])
                     turbine_capacity_user = int(config.wind_data_dict[i][1])
-                    rotor_diameter_user = int(config.wind_data_dict[i][4])  # meters
-                    turbine_efficiency_user = float(config.wind_data_dict[i][5])  # percentage
+                    rotor_diameter_user = int(config.wind_data_dict[i][5])  # meters
+                    turbine_efficiency_user = float(config.wind_data_dict[i][2])  # percentage
 
                     Wind_csv_save.wind_function_main(
                         self,

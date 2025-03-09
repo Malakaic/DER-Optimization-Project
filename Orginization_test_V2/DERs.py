@@ -60,17 +60,19 @@ class Der_menu_page (tk.Frame):
                         size_entry = tk.Entry(pv_frame)
                         size_entry.grid(row=1, column=1, sticky="e", padx=5)
 
-                        # Text box for System capital cost
-                        cost_label = tk.Label(pv_frame, text="Cost ($/kW-DC):", anchor="w")
-                        cost_label.grid(row=2, column=0, sticky="w", padx=5)
-                        cost_entry = tk.Entry(pv_frame)
-                        cost_entry.grid(row=2, column=1, sticky="e", padx=5)
 
                         # Text box for Lifespan
                         lifespan_label = tk.Label(pv_frame, text="Lifespan (years):", anchor="w")
-                        lifespan_label.grid(row=3, column=0, sticky="w", padx=5)
+                        lifespan_label.grid(row=2, column=0, sticky="w", padx=5)
                         lifespan_entry = tk.Entry(pv_frame)
-                        lifespan_entry.grid(row=3, column=1, sticky="e", padx=5)
+                        lifespan_entry.grid(row=2, column=1, sticky="e", padx=5)
+
+                        
+                        # Text box for efficiency
+                        efficiency_label = tk.Label(pv_frame, text="Efficiency (%):", anchor="w")
+                        efficiency_label.grid(row=3, column=0, sticky="w", padx=5)
+                        efficiency_entry = tk.Entry(pv_frame)
+                        efficiency_entry.grid(row=3, column=1, sticky="e", padx=5)
 
                         # Dropdown for Module type
                         module_type_label = tk.Label(pv_frame, text="Module Type:", anchor="w")
@@ -82,24 +84,33 @@ class Der_menu_page (tk.Frame):
                         module_type_dropdown.grid(row=4, column=1, sticky="e", padx=5)
                         module_type_dropdown.current(0)  # Set default selection
 
-                        # Text box for Efficiency
-                        efficiency_label = tk.Label(pv_frame, text="Efficiency (%):", anchor="w")
-                        efficiency_label.grid(row=5, column=0, sticky="w", padx=5)
-                        efficiency_entry = tk.Entry(pv_frame)
-                        efficiency_entry.grid(row=5, column=1, sticky="e", padx=5)
+
+                        # Text box for cost
+                        pv_cost_label = tk.Label(pv_frame, text="Cost ($/kW-DC):", anchor="w")
+                        pv_cost_label.grid(row=5, column=0, sticky="w", padx=5)
+                        pv_cost_entry = tk.Entry(pv_frame)
+                        pv_cost_entry.grid(row=5, column=1, sticky="e", padx=5)
 
 
                         def save_pv_data():
                             # Gather data for the current PV configuration
+
                             pv_data = [
                                 pv_name_entry.get(),  # Name
                                 size_entry.get(),     # Size
-                                cost_entry.get(),     # Cost
                                 lifespan_entry.get(), # Lifespan
+                                efficiency_entry.get(),# Efficiency
                                 module_type_var.get(),# Module Type
-                                efficiency_entry.get()# Efficiency
+                                pv_cost_entry.get()     # Cost
                             ]
-                            
+                                                    
+                            if pv_data[4] == "Monocrystalline":
+                                pv_data[4] = 0
+                            elif pv_data[4] == "Polycrystalline":
+                                pv_data[4] = 1
+                            elif pv_data[4] == "Thin-Film":
+                                pv_data[4] = 2
+
                             """
                             # Validate input values (ensure all fields are filled)
                             if not all(pv_data):
@@ -108,7 +119,7 @@ class Der_menu_page (tk.Frame):
                             """
                             
                             # Append the current configuration to the global list in config
-                            config.pv_configurations.append(pv_data)
+                            #config.pv_configurations.append(pv_data)
 
                             # Check if a save with the same name already exists
                             existing_key = None
@@ -132,7 +143,7 @@ class Der_menu_page (tk.Frame):
 
                        
                         pv_save_button = tk.Button(pv_frame, text="Save", command=save_pv_data)
-                        pv_save_button.grid(row=6, column=0, columnspan=2, pady=10)
+                        pv_save_button.grid(row=7, column=0, columnspan=2, pady=10)
                         
 
                     if option == "Wind":
@@ -152,29 +163,36 @@ class Der_menu_page (tk.Frame):
                         size_entry = tk.Entry(wind_frame)
                         size_entry.grid(row=1, column=1, sticky="e", padx=5)
 
-                        # "Hub Height" label and entry
-                        hub_height_label = tk.Label(wind_frame, text="Hub Height (meters):", anchor="w")
-                        hub_height_label.grid(row=2, column=0, sticky="w", padx=5)
-                        hub_height_entry = tk.Entry(wind_frame)
-                        hub_height_entry.grid(row=2, column=1, sticky="e", padx=5)
-
                         # "Lifespan" label and entry
                         lifespan_label = tk.Label(wind_frame, text="Lifespan (years):", anchor="w")
-                        lifespan_label.grid(row=3, column=0, sticky="w", padx=5)
+                        lifespan_label.grid(row=2, column=0, sticky="w", padx=5)
                         lifespan_entry = tk.Entry(wind_frame)
-                        lifespan_entry.grid(row=3, column=1, sticky="e", padx=5)
+                        lifespan_entry.grid(row=2, column=1, sticky="e", padx=5)
 
-                        # "Rotor Diameter" label and entry
-                        rotor_diameter_label = tk.Label(wind_frame, text="Rotor Diameter (meters):", anchor="w")
-                        rotor_diameter_label.grid(row=4, column=0, sticky="w", padx=5)
-                        rotor_diameter_entry = tk.Entry(wind_frame)
-                        rotor_diameter_entry.grid(row=4, column=1, sticky="e", padx=5)
 
                         # "Efficiency" label and entry
                         efficiency_label = tk.Label(wind_frame, text="Efficiency (%):", anchor="w")
-                        efficiency_label.grid(row=5, column=0, sticky="w", padx=5)
+                        efficiency_label.grid(row=3, column=0, sticky="w", padx=5)
                         efficiency_entry = tk.Entry(wind_frame)
-                        efficiency_entry.grid(row=5, column=1, sticky="e", padx=5)
+                        efficiency_entry.grid(row=3, column=1, sticky="e", padx=5)
+
+                        # "Hub Height" label and entry
+                        hub_height_label = tk.Label(wind_frame, text="Hub Height (meters):", anchor="w")
+                        hub_height_label.grid(row=4, column=0, sticky="w", padx=5)
+                        hub_height_entry = tk.Entry(wind_frame)
+                        hub_height_entry.grid(row=4, column=1, sticky="e", padx=5)
+
+                        # "Rotor Diameter" label and entry
+                        rotor_diameter_label = tk.Label(wind_frame, text="Rotor Diameter (meters):", anchor="w")
+                        rotor_diameter_label.grid(row=5, column=0, sticky="w", padx=5)
+                        rotor_diameter_entry = tk.Entry(wind_frame)
+                        rotor_diameter_entry.grid(row=5, column=1, sticky="e", padx=5)
+
+                        # "Cost" label and entry
+                        turbine_cost_label = tk.Label(wind_frame, text="Cost ($/kWh):", anchor="w")
+                        turbine_cost_label.grid(row=6, column=0, sticky="w", padx=5)
+                        turbine_cost_entry = tk.Entry(wind_frame)
+                        turbine_cost_entry.grid(row=6, column=1, sticky="e", padx=5)
 
                         # Save Button for Wind
                         def save_wind_data():
@@ -182,10 +200,11 @@ class Der_menu_page (tk.Frame):
                             wind_data = [
                                 wind_name_entry.get(),   # Name
                                 size_entry.get(),        # Size
-                                hub_height_entry.get(),  # Hub Height
+                                efficiency_entry.get(),   # Efficiency
                                 lifespan_entry.get(),    # Lifespan
+                                hub_height_entry.get(),  # Hub Height
                                 rotor_diameter_entry.get(),  # Rotor Diameter
-                                efficiency_entry.get()   # Efficiency
+                                turbine_cost_entry.get()  # Cost
                             ]
 
                             # Check if a save with the same name already exists
@@ -209,7 +228,7 @@ class Der_menu_page (tk.Frame):
                                 config.wind_counter += 1
 
                         wind_save_button = tk.Button(wind_frame, text="Save", command=save_wind_data)
-                        wind_save_button.grid(row=6, column=0, columnspan=2, pady=10)
+                        wind_save_button.grid(row=7, column=0, columnspan=2, pady=10)
 
                     if option == "Battery":
                         # A container for the layout of all Battery-specific inputs

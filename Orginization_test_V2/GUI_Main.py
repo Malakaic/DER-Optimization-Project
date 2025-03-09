@@ -59,6 +59,16 @@ class EnergyResourceApp(tk.Tk):
         self.calculate_button.config(font=('Helvetica', 14, 'bold'), bg='black', fg='white')
         self.calculate_button.grid(row=1, column=0, columnspan=2, pady=10)
 
+        # Bind the close event to a custom method
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+    def on_closing(self):
+        """Handle the window close event."""
+        self.master.quit()
+        self.master.destroy()
+
+
+
 
  
 if __name__ == "__main__":

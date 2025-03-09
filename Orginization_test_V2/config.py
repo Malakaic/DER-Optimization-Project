@@ -3,14 +3,14 @@
 
  # Initialize PV-related variables
 pv_counter = 1  # Start from 1 or 0 based on your preference
-pv_data_dict = {}  # Dictionary to store PV data
+pv_data_dict = {}  # Dictionary to store PV data (name, capacity, lifespan, efficiency, module type, cost)
 wind_counter = 1  # Start from 1 or 0 based on your preference
-wind_data_dict = {}  # Dictionary to store Wind data
+wind_data_dict = {}  # Dictionary to store Wind data (name, capacity, lifespan, efficiency, hub height, rotor diameter, cost)
 battery_counter = 1  # Start from 1 or 0 based on your preference
 battery_data_dict = {}  # Dictionary to store Battery data
 
 # Initialize an empty list to store configurations
-pv_configurations = []
+project_name = "Default_Project"  # Default project name
 
 
 latitude = 0.0

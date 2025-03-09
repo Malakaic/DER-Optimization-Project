@@ -27,10 +27,6 @@ class Location(tk.Frame):
         self.country_entry = tk.Entry(location_frame)
         self.country_entry.grid(row=1, column=1, padx=5)
 
-        # Save Location Button
-        save_button = tk.Button(location_frame, text="Save Location", command=self.save_location)
-        save_button.grid(row=2, column=0, columnspan=4, pady=10)
-
         # Ensure the frame expands properly
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
