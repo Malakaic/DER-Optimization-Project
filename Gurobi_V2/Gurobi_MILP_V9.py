@@ -12,6 +12,10 @@ costTurbine = [100, 120, 140]  # Wind turbines
 costPV = [150, 180, 210]  # Solar PV
 costgrid = 0.01  # Grid energy cost per kWh
 
+print(f"The capacity for each turbine is:", PowerTurbine)
+print(f"The capacity for each PV Panel is:", PowerPV)  
+print(f"The cost of each turbine is:", costTurbine)
+print(f"The cost of each PV is:", costPV)
 # Lifespan in hours (24 hours * 365 days * 10 years)
 lifespan_hours = 24 * 365 * 10
 
@@ -24,13 +28,13 @@ turbine_max = 4
 PV_max = 20
 
 # Load Solar Power Data
-solar_df = pd.read_csv(r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Environmental Data V4\solar_data_saved.csv", skiprows=28, usecols=[0, 1, 2, 3], names=["Month", "Day", "Hour", "Solar_Power"], header=0)
+solar_df = pd.read_csv(r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Environmental Data V3\solar_data_wind_and_solar.csv", skiprows=28, usecols=[0, 1, 2, 3], names=["Month", "Day", "Hour", "Solar_Power"], header=0)
 solar_df["Original_Solar_Power"] = solar_df["Solar_Power"] / 1000  # Convert to kW
 solar_df["Solar_Power"] = (solar_df["Solar_Power"] / 1000) * (PowerPV[0] / 10)  # Adjust for 10 kW panel size
 
 # Load Wind Power Data
-wind_df = pd.read_csv(r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Environmental Data V4\wind_power_output_main_GUI.csv", usecols=[0, 1, 2, 3, 6], names=["Year", "Month", "Day", "Hour", "Wind_Power"], header=0)
-wind_df["Original_Wind_Power"] = wind_df["Wind_Power"] / 1500  # Convert to kW
+wind_df = pd.read_csv(r"C:\Users\crane30\DER-Code\DER-Optimization-Project\Environmental Data V3\wind_power_output_wind_and_solar.csv", usecols=[0, 1, 2, 3, 6], names=["Year", "Month", "Day", "Hour", "Wind_Power"], header=0)
+wind_df["Original_Wind_Power"] = wind_df["Wind_Power"]  # Convert to kW
 wind_df["Wind_Power"] = (wind_df["Wind_Power"] / 1500) * PowerTurbine[0]  # Adjust for 1500 kW turbine size
 
 
