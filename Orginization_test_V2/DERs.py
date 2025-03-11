@@ -176,11 +176,14 @@ class Der_menu_page (tk.Frame):
                         efficiency_entry = tk.Entry(wind_frame)
                         efficiency_entry.grid(row=3, column=1, sticky="e", padx=5)
 
-                        # "Hub Height" label and entry
+                        # "Hub Height" label and dropdown
                         hub_height_label = tk.Label(wind_frame, text="Hub Height (meters):", anchor="w")
                         hub_height_label.grid(row=4, column=0, sticky="w", padx=5)
-                        hub_height_entry = tk.Entry(wind_frame)
-                        hub_height_entry.grid(row=4, column=1, sticky="e", padx=5)
+                        hub_height_options = [10, 40, 60, 80, 100, 120, 140, 160, 200]
+                        hub_height_var = tk.StringVar()
+                        hub_height_dropdown = ttk.Combobox(wind_frame, textvariable=hub_height_var, values=hub_height_options, state="readonly")
+                        hub_height_dropdown.grid(row=4, column=1, sticky="e", padx=5)
+                        hub_height_dropdown.current(0)  # Set default selection
 
                         # "Rotor Diameter" label and entry
                         rotor_diameter_label = tk.Label(wind_frame, text="Rotor Diameter (meters):", anchor="w")
@@ -202,7 +205,7 @@ class Der_menu_page (tk.Frame):
                                 size_entry.get(),        # Size
                                 efficiency_entry.get(),   # Efficiency
                                 lifespan_entry.get(),    # Lifespan
-                                hub_height_entry.get(),  # Hub Height
+                                hub_height_var.get(),  # Hub Height
                                 rotor_diameter_entry.get(),  # Rotor Diameter
                                 turbine_cost_entry.get()  # Cost
                             ]
