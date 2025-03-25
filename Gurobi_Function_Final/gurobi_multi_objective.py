@@ -204,6 +204,9 @@ selected_pv_idx = [j for j in range(len(PowerPV)) if selected_pv_type[j].x > 0.5
 selected_turbine_values = [config.wind_data_dict[j][0] for j in selected_turbine_idx]
 selected_pv_values = [config.pv_data_dict[j][0] for j in selected_pv_idx]
 
+print (f"Normalized Installation Cost: {normalized_installation_cost.getValue()}")
+print (f"Renewable Fraction: {renewable_fraction.getValue()}")
+
 print(f"Selected Turbine(s): {selected_turbine_values}")
 print(f"Selected PV(s): {selected_pv_values}")
 
