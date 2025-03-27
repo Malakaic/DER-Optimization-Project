@@ -17,18 +17,18 @@ costgrid = 1  # Grid energy cost per kWh
 # Lifespan in hours (24 hours * 365 days * 10 years)
 lifespan_hours = 24 * 365 * 10
 
-# Objective Weights
-weight_cost = 0.5
-weight_renewable = 0.5
 
 # DER Maximums
 turbine_max = 4
-PV_max = 20
+PV_max = 100
 
 # Construct the file paths using the project name
 project_folder = os.path.join(os.getcwd(), config.project_name)
 
-# Load Solar Power Data
+# Objective Weights
+weight_cost = 0.5
+weight_renewable = 0.5
+
 
 solar_files = [f for f in os.listdir(project_folder) if f.endswith("_solar_data_saved.csv")]
 solar_dfs = []
@@ -78,15 +78,11 @@ combined_csv_path = os.path.join(project_folder, "Combined_Power_Data.csv")
 power_data.to_csv(combined_csv_path, index=False)
 
 # Calculate the highest possible installation cost
-max_turbine_installation_cost = sum(costTurbine[j] * PowerTurbine[j] for j in range(len(PowerTurbine))) * turbine_max
-max_pv_installation_cost = sum(costPV[j] * PowerPV[j] for j in range(len(PowerPV))) * PV_max
-max_installation_cost = max_turbine_installation_cost + max_pv_installation_cost
+pv_costs = [data[5] for data in config.pv_data_dict.values()]
+turbine_costs = [data[6] for data in config.wind_data_dict.values()]
 
-# Calculate the highest possible grid cost
-max_grid_cost = load_demand * costgrid * len(power_data)
-
-# Calculate the highest possible total system cost
-max_total_system_cost = max_installation_cost + max_grid_cost
+pv_capacities = [data[1] for data in config.pv_data_dict.values()]
+turbine_capacities = [data[1] for data in config.wind_data_dict.values()]
 
 
 # Initialize model
@@ -133,40 +129,68 @@ for i, row in power_data.iterrows():
 
 # Objective function
 # Calculate the highest possible installation cost
-max_turbine_installation_cost = gp.quicksum(selected_turbine_type[j] * turbine_max * costTurbine[j] * PowerTurbine[j] for j in range(len(PowerTurbine)))
-max_pv_installation_cost = gp.quicksum(selected_pv_type[j] * PV_max * costPV[j] * PowerPV[j] for j in range(len(PowerPV)))
-max_installation_cost = max_turbine_installation_cost + max_pv_installation_cost
-
-
-
 turbine_installation_cost = gp.quicksum(selected_turbine_type[j] * num_turbines * costTurbine[j] * PowerTurbine[j] for j in range(len(PowerTurbine)))
 pv_installation_cost = gp.quicksum(selected_pv_type[j] * num_pvs * costPV[j] * PowerPV[j] for j in range(len(PowerPV)))
-installation_cost = turbine_installation_cost + pv_installation_cost
-
-turbine_hourly_cost = turbine_installation_cost / lifespan_hours
-pv_hourly_cost = pv_installation_cost / lifespan_hours
-
 grid_cost = gp.quicksum(grid_energy[i] * costgrid for i in range(len(power_data)))
 
-total_renewable_power = gp.quicksum(
-    selected_turbine_type[j] * num_turbines * PowerTurbine[j] + selected_pv_type[j] * num_pvs * PowerPV[j] for j in range(len(PowerTurbine))
+total_cost = turbine_installation_cost + pv_installation_cost + grid_cost
+
+# Total renewable power used in each time step
+renewable_power = gp.quicksum(
+    actual_solar_power_used[i] + gp.quicksum(
+        selected_turbine_type[j] * num_turbines * power_data.loc[i, f"Turbine-{j+1} Power"]
+        for j in range(len(PowerTurbine))
+    )
+    for i in range(len(power_data))
 )
-# Calculate and print total yearly energy generated from each component
+
+
+# Total energy demand for all time steps
+total_energy_demand = load_demand * len(power_data)
+
+# Renewable fraction
+renewable_fraction = renewable_power / total_energy_demand
+
 
 actual_pv_power = sum(selected_pv_type[j] * num_pvs * row.get(f"PV-{j+1} Solar Power", 0) for j in range(len(PowerPV)))
 actual_wind_power = sum(selected_turbine_type[j] * num_turbines * row.get(f"Turbine-{j+1} Power", 0) for j in range(len(PowerTurbine)))
 total_renewable_power_production = actual_pv_power + actual_wind_power
 
-renewable_fraction = total_renewable_power_production / (load_demand * len(power_data))
+total_generation = total_renewable_power_production + gp.quicksum(grid_energy[i] for i in range(len(power_data)))
 
 
-normalized_installation_cost = (installation_cost+grid_cost) / max_total_system_cost
 
+# Minimum Cost
+model.setObjective(total_cost, GRB.MINIMIZE)
+model.optimize()
+C_min = model.ObjVal
 
-model.setObjective(weight_cost * normalized_installation_cost - weight_renewable * renewable_fraction, GRB.MINIMIZE)
+# Maximum Cost
+model.setObjective(total_cost, GRB.MAXIMIZE)
+model.optimize()
+C_max = model.ObjVal
 
+# Minimum Renewable Fraction
+model.setObjective(total_renewable_power_production, GRB.MINIMIZE)
+model.optimize()
+R_min = model.ObjVal
+
+# Maximum Renewable Fraction
+model.setObjective(total_renewable_power_production, GRB.MAXIMIZE)
+model.optimize()
+R_max = model.ObjVal
+
+def normalize_cost(cost_value):
+    return (C_max - cost_value) / (C_max - C_min)
+
+def normalize_renewable(renewable_value):
+    return (renewable_value - R_min) / (R_max - R_min)
+
+cost_normalized = normalize_cost(total_cost)
+renewable_normalized = normalize_renewable(total_renewable_power_production)
 
 # Solve model
+model.setObjective(weight_cost * cost_normalized + weight_renewable * renewable_normalized, GRB.MAXIMIZE)
 model.optimize()
 
 # Store results
@@ -218,15 +242,17 @@ selected_pv_idx = [j for j in range(len(PowerPV)) if selected_pv_type[j].x > 0.5
 
 selected_turbine_values = [config.wind_data_dict[j][0] for j in selected_turbine_idx]
 selected_pv_values = [config.pv_data_dict[j][0] for j in selected_pv_idx]
-
-print(f"Maximum Turbine Installation Cost: {max_turbine_installation_cost}")
-print(f"Maximum PV Installation Cost: {max_pv_installation_cost}")
-print (f"Maximum Installation Cost: {max_installation_cost}")
-print (f"Maximum Grid Cost: {max_grid_cost}")
-print (f"Maximum Total System Cost: {max_total_system_cost}")
-print (f"Normalized Installation Cost: {normalized_installation_cost.getValue()}")
+"""
+print(f"total cost: {total_cost}")
+print(f"total renewable power: {renewable_power}")
+print(f"C_min: {C_min}")
+print(f"C_max: {C_max}")
+print(f"R_min: {R_min}")
+print(f"R_max: {R_max}")
+print(f"Normalized Cost: {cost_normalized}")
+print(f"Normalized Renewable: {renewable_normalized}")"
+"""
 print (f"Total Renewable Power: {total_renewable_power_production.getValue()}")
-print (f"Renewable Fraction: {renewable_fraction.getValue()}")
 
 print(f"Selected Turbine(s): {selected_turbine_values}")
 print(f"Selected PV(s): {selected_pv_values}")
@@ -239,14 +265,16 @@ print(f"Number of selected PVs: {num_pvs.x}")
 print(f"Turbine installation cost: {turbine_installation_cost.getValue()}")
 print(f"PV installation cost: {pv_installation_cost.getValue()}")
 
-# Print yearly costs
-print(f"Turbine hourly cost: {turbine_hourly_cost.getValue() }")
-print(f"PV hourly cost: {pv_hourly_cost.getValue() }")
+
 print(f"Grid yearly cost: {grid_cost.getValue()}")
 
 # Calculate and print total yearly energy generated from each component using actual data
 total_yearly_pv_energy = sum(
-    actual_solar_power_used[i].x for i in range(len(power_data))
+    gp.quicksum(
+        selected_pv_type[j].x * num_pvs.x * power_data.at[i, f"PV-{j+1} Solar Power"]
+        for j in range(len(PowerPV))
+    )
+    for i in range(len(power_data))
 )
 total_yearly_wind_energy = sum(
     gp.quicksum(
