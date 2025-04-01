@@ -27,6 +27,15 @@ class Location(tk.Frame):
         self.country_entry = tk.Entry(location_frame)
         self.country_entry.grid(row=1, column=1, padx=5)
 
+        # Latitude and Longitude Entry
+        tk.Label(location_frame, text="Latitude:").grid(row=2, column=0, padx=5)
+        self.latitude_entry = tk.Entry(location_frame)
+        self.latitude_entry.grid(row=2, column=1, padx=5)
+
+        tk.Label(location_frame, text="Longitude:").grid(row=2, column=2, padx=5)
+        self.longitude_entry = tk.Entry(location_frame)
+        self.longitude_entry.grid(row=2, column=3, padx=5)
+
         # Ensure the frame expands properly
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
@@ -37,24 +46,36 @@ class Location(tk.Frame):
 
     def save_location(self):
         """Saves the entered location data."""
-        city = self.city_entry.get()
-        state = self.state_entry.get()
-        country = self.country_entry.get()
-
-        if not city or not state or not country:
-            messagebox.showerror("Error", "Please enter a valid city, state, and country.")
+        city = self.city_entry.get().strip()
+        state = self.state_entry.get().strip()
+        country = self.country_entry.get().strip()
+        latitude = self.latitude_entry.get().strip()
+        longitude = self.longitude_entry.get().strip()
+        
+        if city and state and country:
+            latitude, longitude = self.get_coordinates(city, state, country)
             return
 
-        latitude, longitude = self.get_coordinates(city, state, country)
+        if latitude and longitude:
+            try:
+                config.latitude = float(latitude)
+                config.longitude = float(longitude)
+                print(config.latitude, config.longitude)
+                return
+            except ValueError:
+                messagebox.showerror("Error", "Invalid latitude or longitude format.")
+                return
         
-        config.latitude = latitude
-        config.longitude = longitude
-
-        if latitude is None or longitude is None:
+        if not latitude or not longitude:
+            if not city or not state or not country:
+                messagebox.showerror("Error", "Please enter either city, state, and country OR latitude and longitude.")
+                return
             messagebox.showerror("Error", "Unable to retrieve coordinates. Please check your input.")
             return
-        print(config.latitude, config.longitude)
 
+        config.latitude = latitude
+        config.longitude = longitude
+        print(config.latitude, config.longitude)
 
     def get_coordinates(self, city, state, country):
         """Retrieve coordinates for the given city, state, and country."""
