@@ -5,7 +5,7 @@ import config
 import os
 
 # Parameters
-load_demand = 10000  # Total hourly load demand (kW)
+load_demand = config.load_demand # Total hourly load demand (kW)
 PowerTurbine = [config.wind_data_dict[i][1] for i in config.wind_data_dict]  # Wind turbine capacities (kW)
 PowerPV = [config.pv_data_dict[i][1] for i in config.pv_data_dict]  # Solar PV capacities (kW)
 
@@ -26,8 +26,8 @@ PV_max = 1000
 project_folder = os.path.join(os.getcwd(), config.project_name)
 
 # Objective Weights
-weight_cost = 1
-weight_renewable = 0
+weight_cost = 0.7
+weight_renewable = 0.3
 
 
 solar_files = [f for f in os.listdir(project_folder) if f.endswith("_solar_data_saved.csv")]
@@ -128,12 +128,6 @@ for i, row in power_data.iterrows():
     )
 
 # Objective function
-# Calculate the highest possible installation cost
-"""
-turbine_installation_cost = gp.quicksum(selected_turbine_type[j] * num_turbines * costTurbine[j] * PowerTurbine[j] for j in range(len(PowerTurbine)))
-pv_installation_cost = gp.quicksum(selected_pv_type[j] * num_pvs * costPV[j] * PowerPV[j] for j in range(len(PowerPV)))
-grid_cost = gp.quicksum(grid_energy[i] * costgrid for i in range(len(power_data)))
-"""
 
 # Initialize variables to store the total hourly costs
 total_turbine_hourly_cost = 0
@@ -169,12 +163,12 @@ for i, row in power_data.iterrows():
 # Average the total costs over the length of the dataset
 average_turbine_cost = total_turbine_hourly_cost / len(power_data)
 average_pv_cost = total_pv_hourly_cost / len(power_data)
-#average_grid_cost = total_grid_cost / len(power_data)
 
 
+# levelized average grid cost
 grid_cost = gp.quicksum(grid_energy[i] * costgrid for i in range(len(power_data)))/len(power_data)
 
-
+# total average levelized hourly cost of the system
 total_cost = average_turbine_cost + average_pv_cost + grid_cost
 
 # Total renewable power used in each time step
